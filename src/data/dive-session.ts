@@ -12,7 +12,6 @@ export type DiveParticipantsById = {
   participants: DiveParticipant[];
 };
 
-/** 001, 002만 우선 채움 */
 export const DIVE_PARTICIPANTS: Record<string, DiveParticipantsById> = {
   "001": {
     diveId: "001",
