@@ -21,8 +21,7 @@ export default function TopBar({
   const router = useRouter();
   console.log("TopBar detail:", detail);
 
-  const canExport =
-    detail.status === "APPROVED" || detail.status === "REJECTED";
+  const canExport = detail.status === "APPROVED";
 
   return (
     <div className="mb-6 -mt-6 flex items-center justify-between">

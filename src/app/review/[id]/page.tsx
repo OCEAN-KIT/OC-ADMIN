@@ -16,6 +16,7 @@ import {
 
 // ✅ 공용 타입을 가져옵니다 (로컬 정의 제거!)
 import { type DiverActivityLog, type ActivityKind } from "@/types/divers";
+import { csvExportByIds } from "@/api/csv";
 
 export default function ReviewPage() {
   useAuthGuard({ mode: "gotoLogin" });
@@ -62,7 +63,10 @@ export default function ReviewPage() {
 
   return (
     <div className="mx-auto max-w-[1100px] p-6">
-      <TopBar detail={detail} />
+      <TopBar
+        detail={detail}
+        onExport={() => csvExportByIds([Number(detail.submissionId)])}
+      />
 
       <SessionSummary
         date={commonDate}
