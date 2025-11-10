@@ -6,18 +6,26 @@ import { logIn } from "@/api/auth";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation"; // ⬅️ 추가
+import { useEffect, useState } from "react"; // ⬅️ useEffect 추가
 import { ClipLoader } from "react-spinners";
 
 export default function LoginPage() {
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
   const queryClient = useQueryClient();
   const router = useRouter();
+  const searchParams = useSearchParams(); // ⬅️ 추가
 
   const [form, setForm] = useState({ id: "", password: "" });
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [syncing, setSyncing] = useState(false); // myInfo 리패치 대기 상태
+
+  // ⬅️ demo=1이면 인풋 자동 채움 (한 번만)
+  useEffect(() => {
+    if (searchParams?.get("demo") === "1") {
+      setForm({ id: "admin@admin.com", password: "password" });
+    }
+  }, [searchParams]);
 
   if (checking || isLoggedIn) return null;
 
@@ -36,9 +44,7 @@ export default function LoginPage() {
       await queryClient.invalidateQueries({
         queryKey: ["myInfo"] /*, refetchType: "active"(기본)*/,
       });
-      // 서버 컴포넌트에서 세션을 읽는 UI가 있다면 필요 시 아래도 추가:
-      // router.refresh();
-
+      // router.refresh(); // 필요 시
       router.push("/home");
     } catch (err) {
       console.error("로그인 에러:", err);
@@ -157,7 +163,6 @@ export default function LoginPage() {
             >
               {syncing ? (
                 <span className="translate-y-[2px]">
-                  {" "}
                   <ClipLoader size={30} color="#FFFFFF" speedMultiplier={0.8} />
                 </span>
               ) : (
