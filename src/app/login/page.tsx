@@ -6,26 +6,18 @@ import { logIn } from "@/api/auth";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation"; // ⬅️ 추가
-import { useEffect, useState } from "react"; // ⬅️ useEffect 추가
+import { useRouter } from "next/navigation"; // ⬅️ 추가
+import { useState } from "react"; // ⬅️ useEffect 추가
 import { ClipLoader } from "react-spinners";
 
 export default function LoginPage() {
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
   const queryClient = useQueryClient();
   const router = useRouter();
-  const searchParams = useSearchParams(); // ⬅️ 추가
 
   const [form, setForm] = useState({ id: "", password: "" });
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [syncing, setSyncing] = useState(false); // myInfo 리패치 대기 상태
-
-  // ⬅️ demo=1이면 인풋 자동 채움 (한 번만)
-  useEffect(() => {
-    if (searchParams?.get("demo") === "1") {
-      setForm({ id: "admin@admin.com", password: "password" });
-    }
-  }, [searchParams]);
 
   if (checking || isLoggedIn) return null;
 
