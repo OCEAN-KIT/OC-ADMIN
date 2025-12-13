@@ -19,7 +19,6 @@ export default function TopBar({
   onExport,
 }: Props) {
   const router = useRouter();
-  console.log("TopBar detail:", detail);
 
   const canExport = detail.status === "APPROVED";
 

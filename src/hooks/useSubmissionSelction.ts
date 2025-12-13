@@ -5,7 +5,10 @@ import type { Submission } from "@/api/submissions";
 
 export function useSubmissionSelection(items: Submission[]) {
   const selectableIds = useMemo(
-    () => items.filter((i) => i.status === "pending").map((i) => String(i.id)),
+    () =>
+      items
+        .filter((i) => i.status === "pending" || i.status === "approved")
+        .map((i) => String(i.id)),
     [items]
   );
   const [selected, setSelected] = useState<Set<string>>(new Set());

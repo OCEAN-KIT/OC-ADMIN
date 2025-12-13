@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
@@ -34,7 +35,12 @@ export default function ReviewPage() {
   });
 
   const detail = data?.data;
-  console.log("detail:", detail);
+
+  useEffect(() => {
+    if (detail) {
+      console.log("[ReviewPage] detail payload:", detail);
+    }
+  }, [detail]);
 
   if (isError || !detail) {
     return (

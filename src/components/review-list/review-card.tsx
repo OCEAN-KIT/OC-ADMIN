@@ -24,9 +24,6 @@ export default function ReviewCard({
 }: Props) {
   const router = useRouter();
   const goDetail = () => router.push(`/review/${review.id}`);
-  console.log("review: ", review);
-
-  console.log("review: ", review);
 
   // ✅ 백엔드 포맷: "2025,12,3,9,0,7,438000000"
   const raw = review.datetime;
@@ -65,6 +62,7 @@ export default function ReviewCard({
   }
 
   const isPending = review.status === "pending";
+  const isSelectable = isPending || review.status === "approved";
   const statusChip =
     review.status === "approved"
       ? {
@@ -102,7 +100,7 @@ export default function ReviewCard({
     >
       <div className={`${REVIEW_GRID} items-center`}>
         <div className="pl-1 flex items-center gap-2">
-          {isPending ? (
+          {isSelectable ? (
             <input
               type="checkbox"
               checked={selected}

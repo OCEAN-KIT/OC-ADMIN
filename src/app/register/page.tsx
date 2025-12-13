@@ -42,7 +42,6 @@ export default function RegisterPage() {
 
       const res2 = await signUp2(form.id, form.password);
       const token = res2.data.access;
-      console.log(token);
 
       await signUp3(form.nickname, form.email, form.phone);
 

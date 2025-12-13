@@ -45,8 +45,6 @@ export default function DebugPushPanel() {
       credentials: "include", // 서버가 세션 인증이면 필요
       body: JSON.stringify(payload),
     });
-
-    console.log(res);
   };
 
   return (

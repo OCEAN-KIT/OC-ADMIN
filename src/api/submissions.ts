@@ -126,10 +126,6 @@ export async function fetchSubmissions(params: {
   });
 
   try {
-    console.group("[fetchSubmissions] request params");
-    console.log(queryParams);
-    console.groupEnd();
-
     const { data } = await axiosInstance.get("/api/admin/submissions", {
       params: queryParams,
     });
@@ -154,10 +150,6 @@ export async function fetchSubmissions(params: {
         delete (retryParams as Record<string, unknown>).status;
 
         try {
-          console.group("[fetchSubmissions] retry without status");
-          console.log(retryParams);
-          console.groupEnd();
-
           const { data } = await axiosInstance.get("/api/admin/submissions", {
             params: retryParams,
           });
@@ -307,10 +299,6 @@ type SubmissionDetailResponse = {
 
 export async function getSubmissionDetails(id: number) {
   try {
-    console.group("[getSubmissionDetails] request");
-    console.log({ id, url: `/api/admin/submissions/${id}` });
-    console.groupEnd();
-
     // ✅ GET에는 body를 넣지 않습니다.
     const { data } = await axiosInstance.get<SubmissionDetailResponse>(
       `/api/admin/submissions/${id}`

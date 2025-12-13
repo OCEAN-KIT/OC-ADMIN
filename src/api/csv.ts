@@ -1,26 +1,7 @@
-// src/api/exports.ts
 import axiosInstance from "@/utils/axiosInstance";
+import { extractFilename, saveBlobAsFile } from "@/utils/download";
 
 type ID = number | string;
-
-function extractFilename(header?: string | null) {
-  if (!header) return undefined;
-  const m =
-    /filename\*?=(?:UTF-8''|")?([^";\n]+)/i.exec(header) ??
-    /filename=(.+)$/.exec(header);
-  return m ? decodeURIComponent(m[1].replace(/"/g, "")) : undefined;
-}
-
-function saveBlobAsFile(blob: Blob, suggestedName = "export.csv") {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = suggestedName;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
 
 /**
  * 선택한 submission ID들로 CSV 다운로드

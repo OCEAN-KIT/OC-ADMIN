@@ -9,6 +9,7 @@ import {
   useBulkRejectMutation,
   useDeleteMutation,
 } from "@/queries/submissions";
+import { useDraftReportPdfExportMutation } from "@/queries/reports";
 import { useSubmissionSelection } from "@/hooks/useSubmissionSelction"; // ✅ 오타 주의
 import ReviewList from "@/components/review-list/review-list";
 import ReviewBulkActions from "@/components/review-list/review-bulk-actions";
@@ -50,6 +51,7 @@ export default function HomePage() {
   const bulkApprove = useBulkApproveMutation();
   const bulkReject = useBulkRejectMutation();
   const deleteOne = useDeleteMutation();
+  const exportDraftPdf = useDraftReportPdfExportMutation();
 
   // 반려 모달
   const [rejectOpen, setRejectOpen] = useState(false);
@@ -85,9 +87,19 @@ export default function HomePage() {
               bulkApprove.mutate(Array.from(selected), { onSuccess: clear })
             }
             onOpenReject={() => openReject(Array.from(selected))}
-            disabled={
-              isFetching || bulkApprove.isPending || bulkReject.isPending
+            onExportPdf={() =>
+              exportDraftPdf.mutate({
+                ids: Array.from(selected),
+                prompt: "PDF export for selected activities",
+              })
             }
+            disabled={
+              isFetching ||
+              bulkApprove.isPending ||
+              bulkReject.isPending ||
+              exportDraftPdf.isPending
+            }
+            exportPending={exportDraftPdf.isPending}
           />
         </div>
 

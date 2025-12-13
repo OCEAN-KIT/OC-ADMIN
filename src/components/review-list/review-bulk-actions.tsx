@@ -1,4 +1,8 @@
 "use client";
+"use client";
+
+import { FileDown } from "lucide-react";
+import { ClipLoader } from "react-spinners";
 
 type Props = {
   className?: string;
@@ -8,6 +12,8 @@ type Props = {
   onToggleAll: () => void;
   onBulkApprove: () => void;
   onOpenReject: () => void;
+  onExportPdf: () => void;
+  exportPending?: boolean;
   disabled?: boolean; // ✅ 추가
 };
 
@@ -19,6 +25,8 @@ export default function ReviewBulkActions({
   onToggleAll,
   onBulkApprove,
   onOpenReject,
+  onExportPdf,
+  exportPending = false,
   disabled = false,
 }: Props) {
   const any = selectedCount > 0;
@@ -57,6 +65,22 @@ export default function ReviewBulkActions({
                    hover:bg-emerald-400/20 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         일괄 승인
+      </button>
+
+      <button
+        type="button"
+        onClick={onExportPdf}
+        disabled={disabled || exportPending || !any}
+        className="h-9 px-3 rounded-md text-sm inline-flex items-center gap-1.5
+                   border border-sky-400/30 bg-sky-400/15 hover:bg-sky-400/20
+                   disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {exportPending ? (
+          <ClipLoader size={14} color="#0ea5e9" />
+        ) : (
+          <FileDown className="h-4 w-4" />
+        )}
+        <span>PDF 내보내기</span>
       </button>
     </div>
   );
