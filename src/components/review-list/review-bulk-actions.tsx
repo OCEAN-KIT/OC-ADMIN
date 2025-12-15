@@ -80,7 +80,7 @@ export default function ReviewBulkActions({
         ) : (
           <FileDown className="h-4 w-4" />
         )}
-        <span>PDF 내보내기</span>
+        <span>리포트 생성</span>
       </button>
     </div>
   );
