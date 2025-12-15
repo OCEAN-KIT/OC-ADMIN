@@ -146,7 +146,7 @@ export default function ReviewCard({
           </span>
         </div>
 
-        <div className="ml-2 flex items-center gap-2">
+        <div className="-ml-15 flex items-center gap-2">
           {isPending && (
             <>
               <button
