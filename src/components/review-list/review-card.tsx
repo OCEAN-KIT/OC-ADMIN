@@ -70,8 +70,8 @@ export default function ReviewCard({
           cls: "bg-emerald-100 text-emerald-700 ring-emerald-200",
         }
       : review.status === "rejected"
-      ? { text: "반려", cls: "bg-rose-100 text-rose-700 ring-rose-200" }
-      : { text: "검수대기", cls: "bg-gray-100 text-gray-700 ring-gray-200" };
+        ? { text: "반려", cls: "bg-rose-100 text-rose-700 ring-rose-200" }
+        : { text: "검수대기", cls: "bg-gray-100 text-gray-700 ring-gray-200" };
 
   const stop = (e: React.SyntheticEvent) => {
     e.stopPropagation();
@@ -146,7 +146,7 @@ export default function ReviewCard({
           </span>
         </div>
 
-        <div className="-ml-15 flex items-center gap-2">
+        <div className="-ml-15 ㅂ flex items-center gap-2">
           {isPending && (
             <>
               <button

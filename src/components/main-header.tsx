@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useMyInfo } from "@/hooks/useMyInfo";
 import { useQueryClient } from "@tanstack/react-query";
-import { UserRound, LogOut } from "lucide-react";
+import { UserRound, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { logOut } from "@/api/auth";
 import { useRouter } from "next/navigation";
@@ -96,6 +96,16 @@ export default function MainHeader() {
               <div className="px-3 py-2 text-xs text-gray-500">
                 {nickname ? `${nickname} 님` : "로그인 필요"}
               </div>
+              <div className="h-px bg-gray-100" />
+              <Link
+                href="/dashboard"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                대시보드 관리
+              </Link>
               <div className="h-px bg-gray-100" />
               <button
                 role="menuitem"
