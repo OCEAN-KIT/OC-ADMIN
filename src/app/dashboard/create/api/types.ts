@@ -28,6 +28,28 @@ export type BasicPayload = {
   lon: number;
 };
 
+// ── 이식 로그 enum 타입 ──
+
+export type TransplantMethod =
+  | "SEEDLING_STRING"
+  | "ROPE"
+  | "ROCK_FIXATION"
+  | "TRANSPLANT_MODULE"
+  | "DIRECT_FIXATION";
+
+export type SpeciesAttachmentStatus = "GOOD" | "NORMAL" | "POOR";
+
+// ── 이식 로그 페이로드 ──
+
+export type TransplantLogPayload = {
+  recordDate: string;
+  method: TransplantMethod | "";
+  speciesId: number;
+  count: number;
+  areaSize: number;
+  attachmentStatus: SpeciesAttachmentStatus | "";
+};
+
 // ── 초기값 ──
 
 export const BASIC_PAYLOAD_INIT: BasicPayload = {

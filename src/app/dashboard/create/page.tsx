@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { ChevronRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import BasicInfoSection from "./components/BasicInfoSection";
+import TransplantLogSection from "./components/TransplantLogSection";
+import type { SpeciesSection } from "./components/TransplantLogSection";
 import { BASIC_PAYLOAD_INIT } from "./api/types";
 import type { BasicPayload } from "./api/types";
 
@@ -16,6 +18,15 @@ export default function CreateAreaPage() {
   // ── 기본정보 상태 ──
   const [basicPayload, setBasicPayload] =
     useState<BasicPayload>(BASIC_PAYLOAD_INIT);
+
+  // ── 이식 로그 상태 ──
+  const [transplantPayload, setTransplantPayload] = useState<SpeciesSection[]>(
+    [],
+  );
+
+  const handleTransplantChange = (sections: SpeciesSection[]) => {
+    setTransplantPayload(sections);
+  };
 
   const handleBasicChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -78,10 +89,15 @@ export default function CreateAreaPage() {
         </div>
 
         {/* 폼 */}
-        <form onSubmit={handleBasicSubmit}>
+        <form onSubmit={handleBasicSubmit} className="space-y-6">
           <BasicInfoSection
             basicPayload={basicPayload}
             onBasicChange={handleBasicChange}
+          />
+
+          <TransplantLogSection
+            transplantPayload={transplantPayload}
+            onTransplantChange={handleTransplantChange}
           />
         </form>
       </div>
