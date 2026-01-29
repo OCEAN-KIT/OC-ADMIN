@@ -3,48 +3,34 @@
 import { useState } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
-import {
-  ChevronRight,
-  ArrowLeft,
-  MapPin,
-  Calendar,
-  Waves,
-  Ruler,
-  Activity,
-} from "lucide-react";
+import { ChevronRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import BasicInfoSection from "./components/BasicInfoSection";
+import { BASIC_PAYLOAD_INIT } from "./api/types";
+import type { BasicPayload } from "./api/types";
 
 export default function CreateAreaPage() {
   const { checking } = useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
 
-  // 폼 상태
-  const [formData, setFormData] = useState({
-    name: "",
-    restorationRegion: "",
-    startDate: "",
-    endDate: "",
-    habitat: "",
-    depth: "",
-    areaSize: "",
-    level: "",
-    attachmentStatus: "",
-    lat: "",
-    lon: "",
-  });
+  // ── 기본정보 상태 ──
+  const [basicPayload, setBasicPayload] =
+    useState<BasicPayload>(BASIC_PAYLOAD_INIT);
 
-  const handleChange = (
+  const handleBasicChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    setBasicPayload((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleBasicSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: API 연동
-    console.log("Submit:", formData);
+    console.log("BasicPayload:", basicPayload);
     alert("작업영역이 생성되었습니다. (디자인 미리보기)");
     router.push("/dashboard");
   };
@@ -92,8 +78,11 @@ export default function CreateAreaPage() {
         </div>
 
         {/* 폼 */}
-        <form onSubmit={handleSubmit}>
-          <BasicInfoSection />
+        <form onSubmit={handleBasicSubmit}>
+          <BasicInfoSection
+            basicPayload={basicPayload}
+            onBasicChange={handleBasicChange}
+          />
         </form>
       </div>
     </div>
