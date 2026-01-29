@@ -8,6 +8,8 @@ import Link from "next/link";
 import BasicInfoSection from "./components/BasicInfoSection";
 import TransplantLogSection from "./components/TransplantLogSection";
 import type { SpeciesSection } from "./components/TransplantLogSection";
+import GrowthLogSection from "./components/GrowthLogSection";
+import type { GrowthSpeciesSection } from "./components/GrowthLogSection";
 import { BASIC_PAYLOAD_INIT } from "./api/types";
 import type { BasicPayload } from "./api/types";
 
@@ -26,6 +28,15 @@ export default function CreateAreaPage() {
 
   const handleTransplantChange = (sections: SpeciesSection[]) => {
     setTransplantPayload(sections);
+  };
+
+  // ── 성장 로그 상태 ──
+  const [growthPayload, setGrowthPayload] = useState<GrowthSpeciesSection[]>(
+    [],
+  );
+
+  const handleGrowthChange = (sections: GrowthSpeciesSection[]) => {
+    setGrowthPayload(sections);
   };
 
   const handleBasicChange = (
@@ -98,6 +109,11 @@ export default function CreateAreaPage() {
           <TransplantLogSection
             transplantPayload={transplantPayload}
             onTransplantChange={handleTransplantChange}
+          />
+
+          <GrowthLogSection
+            growthPayload={growthPayload}
+            onGrowthChange={handleGrowthChange}
           />
         </form>
       </div>

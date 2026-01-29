@@ -50,6 +50,22 @@ export type TransplantLogPayload = {
   attachmentStatus: SpeciesAttachmentStatus | "";
 };
 
+// ── 성장 로그 enum 타입 ──
+
+export type GrowthStatus = "GOOD" | "NORMAL" | "POOR";
+
+// ── 성장 로그 페이로드 ──
+
+export type GrowthLogPayload = {
+  speciesId: number;
+  isRepresentative: boolean;
+  recordDate: string;
+  attachmentRate: number;
+  survivalRate: number;
+  growthLength: number;
+  status: GrowthStatus | "";
+};
+
 // ── 초기값 ──
 
 export const BASIC_PAYLOAD_INIT: BasicPayload = {
