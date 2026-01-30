@@ -110,3 +110,11 @@ export const BASIC_PAYLOAD_INIT: BasicPayload = {
   lat: 0,
   lon: 0,
 };
+
+export type ApiResponse<T> = {
+  success: boolean;
+  data: T;
+  errors?: Record<string, unknown>;
+  code?: string;
+  message?: unknown;
+};
