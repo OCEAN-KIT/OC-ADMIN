@@ -134,9 +134,7 @@ export default function TransplantLogSection({
       { speciesId: sp.id, speciesName: sp.name, logs: [entry] },
     ]);
 
-    setExpanded((prev) =>
-      prev.includes(sp.name) ? prev : [...prev, sp.name],
-    );
+    setExpanded((prev) => (prev.includes(sp.name) ? prev : [...prev, sp.name]));
     setShowAddForm(false);
     setActiveSpeciesForLogAdd(null);
     setForm({ ...EMPTY_FORM });
@@ -211,7 +209,7 @@ export default function TransplantLogSection({
               아직 추가된 종이 없습니다.
             </p>
             <p className="text-xs text-gray-500 mt-1">
-              "종 추가"를 눌러 첫 이식 기록까지 함께 입력하세요.
+              &quot;종 추가&quot;를 눌러 첫 이식 기록까지 함께 입력하세요.
             </p>
           </div>
         )}
@@ -242,7 +240,9 @@ export default function TransplantLogSection({
                 <label className="block text-xs text-gray-600 mb-1">종</label>
                 <select
                   value={form.speciesId}
-                  onChange={(e) => setField("speciesId", Number(e.target.value))}
+                  onChange={(e) =>
+                    setField("speciesId", Number(e.target.value))
+                  }
                   className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white"
                 >
                   <option value={0}>종 선택</option>

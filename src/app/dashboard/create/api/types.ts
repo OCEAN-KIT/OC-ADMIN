@@ -66,6 +66,36 @@ export type GrowthLogPayload = {
   status: GrowthStatus | "";
 };
 
+// ── 환경 로그 enum 타입 ──
+
+export type EnvironmentCondition = "GOOD" | "NORMAL" | "POOR";
+
+// ── 환경 로그 페이로드 ──
+
+export type EnvironmentLogPayload = {
+  recordDate: string;
+  temperature: number;
+  dissolvedOxygen: number;
+  nutrient: number;
+  visibility: EnvironmentCondition | "";
+  current: EnvironmentCondition | "";
+  surge: EnvironmentCondition | "";
+  wave: EnvironmentCondition | "";
+};
+
+// ── 미디어 로그 enum 타입 ──
+
+export type MediaCategory = "BEFORE" | "AFTER" | "TIMELINE";
+
+// ── 미디어 로그 페이로드 ──
+
+export type MediaLogPayload = {
+  recordDate: string;
+  mediaUrl: string;
+  caption: string;
+  category: MediaCategory | "";
+};
+
 // ── 초기값 ──
 
 export const BASIC_PAYLOAD_INIT: BasicPayload = {

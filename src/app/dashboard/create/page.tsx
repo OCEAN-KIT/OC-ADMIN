@@ -10,6 +10,10 @@ import TransplantLogSection from "./components/TransplantLogSection";
 import type { SpeciesSection } from "./components/TransplantLogSection";
 import GrowthLogSection from "./components/GrowthLogSection";
 import type { GrowthSpeciesSection } from "./components/GrowthLogSection";
+import EnvironmentLogSection from "./components/EnvironmentLogSection";
+import type { EnvironmentLogEntry } from "./components/EnvironmentLogSection";
+import MediaLogSection from "./components/MediaLogSection";
+import type { MediaLogEntry } from "./components/MediaLogSection";
 import { BASIC_PAYLOAD_INIT } from "./api/types";
 import type { BasicPayload } from "./api/types";
 
@@ -37,6 +41,22 @@ export default function CreateAreaPage() {
 
   const handleGrowthChange = (sections: GrowthSpeciesSection[]) => {
     setGrowthPayload(sections);
+  };
+
+  // ── 환경 로그 상태 ──
+  const [environmentPayload, setEnvironmentPayload] = useState<
+    EnvironmentLogEntry[]
+  >([]);
+
+  const handleEnvironmentChange = (entries: EnvironmentLogEntry[]) => {
+    setEnvironmentPayload(entries);
+  };
+
+  // ── 미디어 로그 상태 ──
+  const [mediaPayload, setMediaPayload] = useState<MediaLogEntry[]>([]);
+
+  const handleMediaChange = (entries: MediaLogEntry[]) => {
+    setMediaPayload(entries);
   };
 
   const handleBasicChange = (
@@ -114,6 +134,16 @@ export default function CreateAreaPage() {
           <GrowthLogSection
             growthPayload={growthPayload}
             onGrowthChange={handleGrowthChange}
+          />
+
+          <EnvironmentLogSection
+            environmentPayload={environmentPayload}
+            onEnvironmentChange={handleEnvironmentChange}
+          />
+
+          <MediaLogSection
+            mediaPayload={mediaPayload}
+            onMediaChange={handleMediaChange}
           />
         </form>
       </div>
