@@ -1,0 +1,41 @@
+import type { GrowthLogPayload, GrowthStatus } from "../../api/types";
+
+// ── 더미 종 데이터 (실제로는 API) ──
+
+export const dummySpecies = [
+  { id: 1, name: "감태" },
+  { id: 2, name: "모자반" },
+  { id: 3, name: "대황" },
+  { id: 4, name: "미역" },
+  { id: 5, name: "다시마" },
+];
+
+// ── 상태 옵션 ──
+
+export const statusOptions: { value: GrowthStatus; label: string }[] = [
+  { value: "GOOD", label: "양호" },
+  { value: "NORMAL", label: "보통" },
+  { value: "POOR", label: "미흡" },
+];
+
+// ── UI 전용 타입 ──
+
+export type GrowthLogEntry = GrowthLogPayload & { id: number };
+
+export type GrowthSpeciesSection = {
+  speciesId: number;
+  speciesName: string;
+  logs: GrowthLogEntry[];
+};
+
+// ── 폼 초기값 ──
+
+export const EMPTY_FORM: GrowthLogPayload = {
+  speciesId: 0,
+  isRepresentative: false,
+  recordDate: "",
+  attachmentRate: 0,
+  survivalRate: 0,
+  growthLength: 0,
+  status: "",
+};
