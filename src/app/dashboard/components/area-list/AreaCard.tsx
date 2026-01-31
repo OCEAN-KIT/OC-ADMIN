@@ -41,7 +41,7 @@ export default function AreaCard({ area }: Props) {
 
   return (
     <Link
-      href={`/dashboard/area/${area.id}`}
+      href={`/dashboard/${area.id}`}
       className="block bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-gray-200 transition-all group"
     >
       {/* 상단: 이름 + 상태 + 액션 */}

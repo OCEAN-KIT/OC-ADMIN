@@ -16,6 +16,7 @@ export function useDeleteArea() {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ["areas", "post"],
     mutationFn: (areaId: number) => deleteArea(areaId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: AREAS_QUERY_KEY });

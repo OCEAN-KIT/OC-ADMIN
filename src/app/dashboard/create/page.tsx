@@ -5,59 +5,20 @@ import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
 import { ChevronRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { ClipLoader } from "react-spinners";
 import BasicInfoSection from "./components/BasicInfoSection";
-import TransplantLogSection from "./components/transplant-log";
-import type { SpeciesSection } from "./components/transplant-log";
-import GrowthLogSection from "./components/growth-log";
-import type { GrowthSpeciesSection } from "./components/growth-log";
-import EnvironmentLogSection from "./components/environment-log";
-import type { EnvironmentLogEntry } from "./components/environment-log";
-import MediaLogSection from "./components/MediaLogSection";
-import type { MediaLogEntry } from "./components/MediaLogSection";
+import usePostBasicInfo from "./hooks/usePostBasicInfo";
 import { BASIC_PAYLOAD_INIT } from "./api/types";
 import type { BasicPayload } from "./api/types";
 
 export default function CreateAreaPage() {
   const { checking } = useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
+  const { mutate, isPending } = usePostBasicInfo();
 
   // ── 기본정보 상태 ──
   const [basicPayload, setBasicPayload] =
     useState<BasicPayload>(BASIC_PAYLOAD_INIT);
-
-  // ── 이식 로그 상태 ──
-  const [transplantPayload, setTransplantPayload] = useState<SpeciesSection[]>(
-    [],
-  );
-
-  const handleTransplantChange = (sections: SpeciesSection[]) => {
-    setTransplantPayload(sections);
-  };
-
-  // ── 성장 로그 상태 ──
-  const [growthPayload, setGrowthPayload] = useState<GrowthSpeciesSection[]>(
-    [],
-  );
-
-  const handleGrowthChange = (sections: GrowthSpeciesSection[]) => {
-    setGrowthPayload(sections);
-  };
-
-  // ── 환경 로그 상태 ──
-  const [environmentPayload, setEnvironmentPayload] = useState<
-    EnvironmentLogEntry[]
-  >([]);
-
-  const handleEnvironmentChange = (entries: EnvironmentLogEntry[]) => {
-    setEnvironmentPayload(entries);
-  };
-
-  // ── 미디어 로그 상태 ──
-  const [mediaPayload, setMediaPayload] = useState<MediaLogEntry[]>([]);
-
-  const handleMediaChange = (entries: MediaLogEntry[]) => {
-    setMediaPayload(entries);
-  };
 
   const handleBasicChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -69,18 +30,18 @@ export default function CreateAreaPage() {
     }));
   };
 
-  const handleBasicSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: API 연동
-    console.log("BasicPayload:", basicPayload);
-    alert("작업영역이 생성되었습니다. (디자인 미리보기)");
-    router.push("/dashboard");
+  const handleNextStep = () => {
+    mutate(basicPayload, {
+      onSuccess: (data) => {
+        router.push(`/dashboard/${data.data.id}`);
+      },
+    });
   };
 
   if (checking) {
     return (
       <div className="flex h-[calc(100vh-64px)] items-center justify-center">
-        <div className="text-gray-500">로딩 중...</div>
+        <ClipLoader color="#2C67BC" size={40} />
       </div>
     );
   }
@@ -119,33 +80,27 @@ export default function CreateAreaPage() {
           </div>
         </div>
 
-        {/* 폼 */}
-        <form onSubmit={handleBasicSubmit} className="space-y-6">
+        <div className="space-y-6">
           <BasicInfoSection
             basicPayload={basicPayload}
             onBasicChange={handleBasicChange}
           />
 
-          <TransplantLogSection
-            transplantPayload={transplantPayload}
-            onTransplantChange={handleTransplantChange}
-          />
-
-          <GrowthLogSection
-            growthPayload={growthPayload}
-            onGrowthChange={handleGrowthChange}
-          />
-
-          <EnvironmentLogSection
-            environmentPayload={environmentPayload}
-            onEnvironmentChange={handleEnvironmentChange}
-          />
-
-          <MediaLogSection
-            mediaPayload={mediaPayload}
-            onMediaChange={handleMediaChange}
-          />
-        </form>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              onClick={handleNextStep}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <ClipLoader size={20} color="#FFFFFF" />
+              ) : (
+                "다음단계"
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
