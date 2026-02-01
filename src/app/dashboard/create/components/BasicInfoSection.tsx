@@ -33,12 +33,15 @@ const attachmentOptions = [
 type Props = {
   basicPayload: BasicPayload;
   onBasicChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  disabledFields?: string[];
 };
 
 export default function BasicInfoSection({
   basicPayload,
   onBasicChange,
+  disabledFields = [],
 }: Props) {
+  const isDisabled = (field: string) => disabledFields.includes(field);
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-100">
@@ -165,9 +168,12 @@ export default function BasicInfoSection({
               name="level"
               value={basicPayload.level}
               onChange={onBasicChange}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
+              disabled={isDisabled("level")}
+              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("level") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
             >
-              <option value="">선택하세요</option>
+              <option value="">
+                {isDisabled("level") ? "?? 불러올 수 없음" : "선택하세요"}
+              </option>
               {levelOptions.map((l) => (
                 <option key={l.value} value={l.value}>
                   {l.label}
@@ -188,9 +194,14 @@ export default function BasicInfoSection({
               name="attachmentStatus"
               value={basicPayload.attachmentStatus}
               onChange={onBasicChange}
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
+              disabled={isDisabled("attachmentStatus")}
+              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("attachmentStatus") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
             >
-              <option value="">선택하세요</option>
+              <option value="">
+                {isDisabled("attachmentStatus")
+                  ? "?? 불러올 수 없음"
+                  : "선택하세요"}
+              </option>
               {attachmentOptions.map((s) => (
                 <option key={s.value} value={s.value}>
                   {s.label}
@@ -253,14 +264,17 @@ export default function BasicInfoSection({
               위도(lat) <span className="text-rose-500">*</span>
             </label>
             <input
-              type="number"
+              type={isDisabled("lat") ? "text" : "number"}
               id="lat"
               name="lat"
-              value={basicPayload.lat || ""}
+              value={isDisabled("lat") ? "" : basicPayload.lat || ""}
               onChange={onBasicChange}
-              placeholder="예: 36.0190"
+              placeholder={
+                isDisabled("lat") ? "?? 불러올 수 없음" : "예: 36.0190"
+              }
               step="0.0001"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
+              disabled={isDisabled("lat")}
+              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("lat") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
             />
           </div>
 
@@ -272,14 +286,17 @@ export default function BasicInfoSection({
               경도(lon) <span className="text-rose-500">*</span>
             </label>
             <input
-              type="number"
+              type={isDisabled("lon") ? "text" : "number"}
               id="lon"
               name="lon"
-              value={basicPayload.lon || ""}
+              value={isDisabled("lon") ? "" : basicPayload.lon || ""}
               onChange={onBasicChange}
-              placeholder="예: 129.3430"
+              placeholder={
+                isDisabled("lon") ? "?? 불러올 수 없음" : "예: 129.3430"
+              }
               step="0.0001"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
+              disabled={isDisabled("lon")}
+              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("lon") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
             />
           </div>
         </div>

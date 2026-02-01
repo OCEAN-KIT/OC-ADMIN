@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter, useParams } from "next/navigation";
 import { ChevronRight, ArrowLeft } from "lucide-react";
@@ -17,11 +17,26 @@ import MediaLogSection from "../create/components/MediaLogSection";
 import type { MediaLogEntry } from "../create/components/MediaLogSection";
 import { BASIC_PAYLOAD_INIT } from "../create/api/types";
 import type { BasicPayload } from "../create/api/types";
+import useAreaDetail from "./hooks/useAreaDetail";
+import useTransplantLogs from "./hooks/useTransplantLogs";
+import useGrowthLogs from "./hooks/useGrowthLogs";
+import useEnvironmentLogs from "./hooks/useEnvironmentLogs";
+import useMediaLogs from "./hooks/useMediaLogs";
 
 export default function EditAreaPage() {
   const { checking } = useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
   const { id } = useParams();
+  const areaId = Number(id);
+
+  // ── API 데이터 fetch ──
+  const { data: basicData, isLoading: l1 } = useAreaDetail(areaId);
+  const { data: transplantData, isLoading: l2 } = useTransplantLogs(areaId);
+  const { data: growthData, isLoading: l3 } = useGrowthLogs(areaId);
+  const { data: envData, isLoading: l4 } = useEnvironmentLogs(areaId);
+  const { data: mediaData, isLoading: l5 } = useMediaLogs(areaId);
+
+  const isLoading = l1 || l2 || l3 || l4 || l5;
 
   // ── 기본정보 상태 ──
   const [basicPayload, setBasicPayload] =
@@ -71,7 +86,28 @@ export default function EditAreaPage() {
     setMediaPayload(entries);
   };
 
-  if (checking) {
+  // ── fetch 완료 시 state 초기화 ──
+  useEffect(() => {
+    if (basicData) setBasicPayload(basicData);
+  }, [basicData]);
+
+  useEffect(() => {
+    if (transplantData) setTransplantPayload(transplantData);
+  }, [transplantData]);
+
+  useEffect(() => {
+    if (growthData) setGrowthPayload(growthData);
+  }, [growthData]);
+
+  useEffect(() => {
+    if (envData) setEnvironmentPayload(envData);
+  }, [envData]);
+
+  useEffect(() => {
+    if (mediaData) setMediaPayload(mediaData);
+  }, [mediaData]);
+
+  if (checking || isLoading) {
     return (
       <div className="flex h-[calc(100vh-64px)] items-center justify-center">
         <ClipLoader color="#2C67BC" size={40} />
@@ -117,6 +153,7 @@ export default function EditAreaPage() {
           <BasicInfoSection
             basicPayload={basicPayload}
             onBasicChange={handleBasicChange}
+            disabledFields={["level", "attachmentStatus", "lat", "lon"]}
           />
 
           <TransplantLogSection

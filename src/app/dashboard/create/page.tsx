@@ -45,7 +45,7 @@ export default function CreateAreaPage() {
       </div>
     );
   }
-
+  // TODO: 미입력 필드 프론트단 방지 or 백엔드 에러 받아서
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50">
       <div className="mx-auto max-w-[900px] p-4">
