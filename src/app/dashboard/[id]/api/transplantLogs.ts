@@ -5,7 +5,7 @@ export async function getTransplantLogs(
   areaId: number,
 ): Promise<TransplantLogsResponse> {
   const res = await axiosInstance.get<TransplantLogsResponse>(
-    `/api/dashboard/areas/${areaId}/transplant-logs`,
+    `/api/dashboard/areas/${areaId}/transplants`,
   );
   return res.data;
 }

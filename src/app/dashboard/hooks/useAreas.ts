@@ -9,6 +9,7 @@ export function useGetAreas(page: number) {
   return useQuery({
     queryKey: [...AREAS_QUERY_KEY, page],
     queryFn: () => getAreas(page),
+    staleTime: 1000 * 60,
   });
 }
 
