@@ -43,8 +43,15 @@ export default function EnvironmentLogList({
     value: EnvironmentLogPayload[K],
   ) => setForm((prev) => ({ ...prev, [key]: value }));
 
+  const canSave =
+    !!form.recordDate &&
+    !!form.visibility &&
+    !!form.current &&
+    !!form.surge &&
+    !!form.wave;
+
   const handleSave = () => {
-    if (!form.recordDate) return;
+    if (!canSave) return;
     postLog(form);
     onCloseAddForm();
     setForm({ ...EMPTY_FORM });
@@ -243,7 +250,8 @@ export default function EnvironmentLogList({
             <button
               type="button"
               onClick={handleSave}
-              className="px-3 py-2 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
+              disabled={!canSave}
+              className="px-3 py-2 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               저장
             </button>

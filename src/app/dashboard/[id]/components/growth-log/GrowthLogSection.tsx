@@ -40,7 +40,7 @@ export default function GrowthLogSection({
 
   const handleAddSpeciesWithFirstLog = () => {
     const sp = speciesList.find((s) => s.id === form.speciesId);
-    if (!sp || !form.recordDate) return;
+    if (!sp || !form.recordDate || !form.status) return;
     if (growthPayload.some((s) => s.speciesName === sp.name)) return;
 
     const entry: GrowthLogEntry = {
@@ -67,10 +67,15 @@ export default function GrowthLogSection({
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-        <h2 className="font-semibold text-gray-900 flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-[#2C67BC]" />
-          성장 현황 (종별 · 기록 누적)
-        </h2>
+        <div>
+          <h2 className="font-semibold text-gray-900 flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-[#2C67BC]" />
+            성장 현황 (종별 · 기록 누적)
+          </h2>
+          <p className="text-xs text-gray-500 mt-1 ml-7">
+            반드시 대표 종 한개를 선택해 주세요.
+          </p>
+        </div>
 
         <button
           type="button"

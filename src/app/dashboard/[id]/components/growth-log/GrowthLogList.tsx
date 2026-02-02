@@ -41,6 +41,9 @@ export default function GrowthLogList({
     [sections],
   );
 
+  const canSave =
+    !!form.recordDate && !!form.speciesId && !!form.status;
+
   return (
     <div className="p-6 space-y-4">
       {/* 빈 상태 안내 */}
@@ -174,21 +177,7 @@ export default function GrowthLogList({
             </div>
           </div>
 
-          {/* 대표 체크 + 버튼 */}
-          <div className="mt-4 flex items-center justify-between">
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={form.isRepresentative}
-                onChange={(e) =>
-                  onFieldChange("isRepresentative", e.target.checked)
-                }
-                className="w-4 h-4 text-[#2C67BC] border-gray-300 rounded"
-              />
-              대표 개체로 지정
-            </label>
-
-            <div className="flex gap-2">
+          <div className="mt-4 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={onCancelAddForm}
@@ -199,11 +188,11 @@ export default function GrowthLogList({
               <button
                 type="button"
                 onClick={onSaveNewSpecies}
-                className="px-3 py-2 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
+                disabled={!canSave}
+                className="px-3 py-2 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 저장
               </button>
-            </div>
           </div>
         </div>
       )}

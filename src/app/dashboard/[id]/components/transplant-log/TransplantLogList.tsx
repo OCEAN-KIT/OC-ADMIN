@@ -51,6 +51,12 @@ export default function TransplantLogList({
     [form.method],
   );
 
+  const canSave =
+    !!form.recordDate &&
+    !!form.speciesId &&
+    !!form.method &&
+    !!form.attachmentStatus;
+
   return (
     <div className="p-6 space-y-4">
       {/* 빈 상태 안내 */}
@@ -218,7 +224,8 @@ export default function TransplantLogList({
             <button
               type="button"
               onClick={onSaveNewSpecies}
-              className="px-3 py-2 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
+              disabled={!canSave}
+              className="px-3 py-2 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               저장
             </button>

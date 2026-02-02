@@ -6,6 +6,7 @@ import { Plus, ChevronUp, ChevronDown, Star, Trash2 } from "lucide-react";
 import type { GrowthLogPayload, GrowthStatus } from "../../../create/api/types";
 import {
   usePostGrowthLog,
+  usePatchGrowthLog,
   useDeleteGrowthLog,
 } from "../../hooks/useGrowthLogMutations";
 import {
@@ -23,6 +24,7 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
+  const { mutate: patchLog } = usePatchGrowthLog(areaId);
   const { mutate: deleteLog } = useDeleteGrowthLog(areaId);
 
   const [expanded, setExpanded] = useState(false);
@@ -37,11 +39,21 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
     value: GrowthLogPayload[K],
   ) => setForm((prev) => ({ ...prev, [key]: value }));
 
+  const canSave = !!form.recordDate && !!form.status;
+
   const handleSaveLog = () => {
-    if (!form.recordDate) return;
+    if (!canSave) return;
     postLog(form);
     setIsAddingLog(false);
     setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
+  };
+
+  const handleSetRepresentative = () => {
+    if (!latest) return;
+    patchLog({
+      logId: latest.id,
+      payload: { ...latest, isRepresentative: true },
+    });
   };
 
   const handleCancelLog = () => {
@@ -71,13 +83,14 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
           ) : (
             <ChevronDown className="h-4 w-4 text-gray-500" />
           )}
+
+          {hasRepresentative && (
+            <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+          )}
+
           <span className="font-medium text-gray-900">
             {section.speciesName}
           </span>
-
-          {hasRepresentative && (
-            <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-          )}
 
           <span className="text-xs text-gray-500">
             {section.logs.length === 0
@@ -89,6 +102,25 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
+          {hasRepresentative ? (
+            <span className="flex items-center gap-1 px-2 py-1 text-xs rounded bg-amber-50 text-amber-700 border border-amber-200">
+              <Star className="h-3 w-3 fill-amber-500" />
+              대표종
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSetRepresentative();
+              }}
+              className="flex items-center gap-1 px-2 py-1 text-xs rounded bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
+            >
+              <Star className="h-3 w-3" />
+              대표종으로 지정
+            </button>
+          )}
+
           <button
             type="button"
             onClick={(e) => {
@@ -259,19 +291,7 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
                   ))}
                 </select>
 
-                <label className="flex items-center gap-2 text-xs px-2 py-1.5 rounded border border-gray-200 bg-white">
-                  <input
-                    type="checkbox"
-                    checked={form.isRepresentative}
-                    onChange={(e) =>
-                      setField("isRepresentative", e.target.checked)
-                    }
-                    className="w-3 h-3 text-[#2C67BC] border-gray-300 rounded"
-                  />
-                  대표
-                </label>
-
-                <div className="flex justify-end gap-2 sm:justify-start sm:col-span-6">
+                <div className="flex justify-end gap-2 sm:justify-start">
                   <button
                     type="button"
                     onClick={handleCancelLog}
@@ -282,7 +302,8 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
                   <button
                     type="button"
                     onClick={handleSaveLog}
-                    className="px-2 py-1 text-xs rounded bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
+                    disabled={!canSave}
+                    className="px-2 py-1 text-xs rounded bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     저장
                   </button>

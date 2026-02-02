@@ -42,8 +42,11 @@ export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
     value: TransplantLogPayload[K],
   ) => setForm((prev) => ({ ...prev, [key]: value }));
 
+  const canSave =
+    !!form.recordDate && !!form.method && !!form.attachmentStatus;
+
   const handleSaveLog = () => {
-    if (!form.recordDate || !form.method) return;
+    if (!canSave) return;
     postLog(form);
     setIsAddingLog(false);
     setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
@@ -258,7 +261,8 @@ export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
                   <button
                     type="button"
                     onClick={handleSaveLog}
-                    className="px-2 py-1 text-xs rounded bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
+                    disabled={!canSave}
+                    className="px-2 py-1 text-xs rounded bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     저장
                   </button>
