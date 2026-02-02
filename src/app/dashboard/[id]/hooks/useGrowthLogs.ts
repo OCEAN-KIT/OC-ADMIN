@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getGrowthLogs } from "../api/growthLogs";
-import type { GrowthSpeciesSection } from "../../create/components/growth-log";
+import type { GrowthSpeciesSection } from "../components/growth-log";
 import type { GrowthStatus } from "../../create/api/types";
 
 export default function useGrowthLogs(areaId: number) {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getMediaLogs } from "../api/mediaLogs";
-import type { MediaLogEntry } from "../../create/components/MediaLogSection";
+import type { MediaLogEntry } from "../components/MediaLogSection";
 import type { MediaCategory } from "../../create/api/types";
 
 export default function useMediaLogs(areaId: number) {

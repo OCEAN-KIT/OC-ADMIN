@@ -4,7 +4,7 @@ import { Plus, X } from "lucide-react";
 import type {
   EnvironmentLogPayload,
   EnvironmentCondition,
-} from "../../api/types";
+} from "../../../create/api/types";
 import {
   conditionOptions,
   conditionBadge,
@@ -112,9 +112,7 @@ export default function EnvironmentLogList({
 
             {/* 영양염 */}
             <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-600 mb-1">
-                영양염
-              </label>
+              <label className="block text-xs text-gray-600 mb-1">영양염</label>
               <input
                 type="number"
                 step="0.1"
@@ -132,9 +130,7 @@ export default function EnvironmentLogList({
 
             {/* 투명도 */}
             <div className="sm:col-span-1">
-              <label className="block text-xs text-gray-600 mb-1">
-                투명도
-              </label>
+              <label className="block text-xs text-gray-600 mb-1">투명도</label>
               <select
                 value={form.visibility}
                 onChange={(e) =>
@@ -156,9 +152,7 @@ export default function EnvironmentLogList({
 
             {/* 조류 */}
             <div className="sm:col-span-1">
-              <label className="block text-xs text-gray-600 mb-1">
-                조류
-              </label>
+              <label className="block text-xs text-gray-600 mb-1">조류</label>
               <select
                 value={form.current}
                 onChange={(e) =>
@@ -180,9 +174,7 @@ export default function EnvironmentLogList({
 
             {/* 너울 */}
             <div className="sm:col-span-1">
-              <label className="block text-xs text-gray-600 mb-1">
-                너울
-              </label>
+              <label className="block text-xs text-gray-600 mb-1">너울</label>
               <select
                 value={form.surge}
                 onChange={(e) =>
@@ -204,9 +196,7 @@ export default function EnvironmentLogList({
 
             {/* 파도 */}
             <div className="sm:col-span-1">
-              <label className="block text-xs text-gray-600 mb-1">
-                파도
-              </label>
+              <label className="block text-xs text-gray-600 mb-1">파도</label>
               <select
                 value={form.wave}
                 onChange={(e) =>
@@ -287,9 +277,7 @@ export default function EnvironmentLogList({
                     {entry.recordDate}
                   </td>
                   <td className="px-4 py-3">{entry.temperature}&deg;C</td>
-                  <td className="px-4 py-3">
-                    {entry.dissolvedOxygen}mg/L
-                  </td>
+                  <td className="px-4 py-3">{entry.dissolvedOxygen}mg/L</td>
                   <td className="px-4 py-3">{entry.nutrient}</td>
                   <td className="px-4 py-3">
                     {entry.visibility &&

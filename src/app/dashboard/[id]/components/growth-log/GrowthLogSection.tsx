@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { TrendingUp, Plus, ChevronUp } from "lucide-react";
-import type { GrowthLogPayload } from "../../api/types";
+import type { GrowthLogPayload } from "../../../create/api/types";
 import {
   dummySpecies,
   EMPTY_FORM,
@@ -51,9 +51,7 @@ export default function GrowthLogSection({
       { speciesId: sp.id, speciesName: sp.name, logs: [entry] },
     ]);
 
-    setExpanded((prev) =>
-      prev.includes(sp.name) ? prev : [...prev, sp.name],
-    );
+    setExpanded((prev) => (prev.includes(sp.name) ? prev : [...prev, sp.name]));
     setShowAddForm(false);
     setActiveSpeciesForLogAdd(null);
     setForm({ ...EMPTY_FORM });
@@ -84,9 +82,7 @@ export default function GrowthLogSection({
   // ── 종 제거 ──
 
   const removeSpecies = (speciesName: string) => {
-    onGrowthChange(
-      growthPayload.filter((s) => s.speciesName !== speciesName),
-    );
+    onGrowthChange(growthPayload.filter((s) => s.speciesName !== speciesName));
     setExpanded((prev) => prev.filter((x) => x !== speciesName));
     if (activeSpeciesForLogAdd === speciesName) setActiveSpeciesForLogAdd(null);
   };

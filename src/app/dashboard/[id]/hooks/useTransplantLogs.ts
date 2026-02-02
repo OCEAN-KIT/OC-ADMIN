@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getTransplantLogs } from "../api/transplantLogs";
-import type { SpeciesSection } from "../../create/components/transplant-log";
+import type { SpeciesSection } from "../components/transplant-log";
 import type {
   TransplantMethod,
   SpeciesAttachmentStatus,

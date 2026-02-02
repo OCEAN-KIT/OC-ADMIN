@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { Plus } from "lucide-react";
-import type { GrowthLogPayload, GrowthStatus } from "../../api/types";
+import type { GrowthLogPayload, GrowthStatus } from "../../../create/api/types";
 import {
   dummySpecies,
   statusOptions,

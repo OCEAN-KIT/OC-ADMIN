@@ -1,26 +1,35 @@
 "use client";
 
-import { Plus, ChevronUp, ChevronDown, Star } from "lucide-react";
-import type { GrowthLogPayload, GrowthStatus } from "../../api/types";
-import { statusOptions, type GrowthSpeciesSection } from "./constants";
+import { Plus, ChevronUp, ChevronDown, Trash2 } from "lucide-react";
+import type {
+  TransplantLogPayload,
+  TransplantMethod,
+  SpeciesAttachmentStatus,
+} from "../../../create/api/types";
+import {
+  transplantMethods,
+  attachmentOptions,
+  type SpeciesSection,
+} from "./constants";
 
 type Props = {
-  section: GrowthSpeciesSection;
+  section: SpeciesSection;
   isExpanded: boolean;
   onToggle: () => void;
   isAddingLog: boolean;
   onAddLogClick: () => void;
   onRemoveSpecies: () => void;
-  form: GrowthLogPayload;
-  onFieldChange: <K extends keyof GrowthLogPayload>(
+  form: TransplantLogPayload;
+  onFieldChange: <K extends keyof TransplantLogPayload>(
     key: K,
-    value: GrowthLogPayload[K],
+    value: TransplantLogPayload[K],
   ) => void;
   onSaveLog: () => void;
   onCancelLog: () => void;
+  onDeleteLog: (logId: number) => void;
 };
 
-export default function GrowthLogCard({
+export default function TransplantLogCard({
   section,
   isExpanded,
   onToggle,
@@ -31,9 +40,11 @@ export default function GrowthLogCard({
   onFieldChange,
   onSaveLog,
   onCancelLog,
+  onDeleteLog,
 }: Props) {
-  const hasRepresentative = section.logs.some((x) => x.isRepresentative);
-  const latest = section.logs[section.logs.length - 1];
+  const totalCount = section.logs.reduce((sum, r) => sum + r.count, 0);
+  const totalArea = section.logs.reduce((sum, r) => sum + r.areaSize, 0);
+  const unit = section.logs[0]?.unit ?? "";
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -51,17 +62,9 @@ export default function GrowthLogCard({
           <span className="font-medium text-gray-900">
             {section.speciesName}
           </span>
-
-          {hasRepresentative && (
-            <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-          )}
-
           <span className="text-xs text-gray-500">
-            {section.logs.length === 0
-              ? "(아직 기록 없음)"
-              : `(${section.logs.length}회 기록 · 최근 ${
-                  latest?.growthLength ?? ""
-                }mm)`}
+            ({section.logs.length}회 기록 · 총 {totalCount}
+            {unit} · {totalArea}m²)
           </span>
         </div>
 
@@ -102,33 +105,34 @@ export default function GrowthLogCard({
                   날짜
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  착생률
+                  방식
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  생존률
+                  수량
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  현재 길이
+                  면적
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  상태
+                  착생
                 </th>
-                <th className="text-left py-2 font-medium text-gray-600">
-                  대표
-                </th>
+                <th className="w-10 py-2" />
               </tr>
             </thead>
             <tbody>
-              {section.logs.map((g) => {
-                const statusLabel = statusOptions.find(
-                  (o) => o.value === g.status,
+              {section.logs.map((r) => {
+                const statusLabel = attachmentOptions.find(
+                  (o) => o.value === r.attachmentStatus,
                 );
                 return (
-                  <tr key={g.id} className="border-b last:border-0">
-                    <td className="py-3 text-gray-500">{g.recordDate}</td>
-                    <td className="py-3">{g.attachmentRate}%</td>
-                    <td className="py-3">{g.survivalRate}%</td>
-                    <td className="py-3">{g.growthLength}mm</td>
+                  <tr key={r.id} className="border-b last:border-0">
+                    <td className="py-3 text-gray-500">{r.recordDate}</td>
+                    <td className="py-3">{r.methodLabel}</td>
+                    <td className="py-3">
+                      {r.count}
+                      {r.unit}
+                    </td>
+                    <td className="py-3">{r.areaSize}m²</td>
                     <td className="py-3">
                       {statusLabel && (
                         <span
@@ -144,10 +148,14 @@ export default function GrowthLogCard({
                         </span>
                       )}
                     </td>
-                    <td className="py-3">
-                      {g.isRepresentative && (
-                        <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                      )}
+                    <td className="py-3 text-right">
+                      <button
+                        type="button"
+                        onClick={() => onDeleteLog(r.id)}
+                        className="p-1 rounded hover:bg-rose-50 text-gray-400 hover:text-rose-500 transition-colors"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
                     </td>
                   </tr>
                 );
@@ -159,7 +167,7 @@ export default function GrowthLogCard({
           {isAddingLog && (
             <div className="p-3 rounded-lg border border-[#2C67BC]/30 bg-blue-50/30">
               <p className="text-xs font-medium text-gray-600 mb-2">
-                {section.speciesName} 성장 기록 추가
+                {section.speciesName} 이식 기록 추가
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-6 gap-2">
@@ -170,76 +178,63 @@ export default function GrowthLogCard({
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
-                <input
-                  type="number"
-                  placeholder="착생률 %"
-                  value={form.attachmentRate || ""}
+                <select
+                  value={form.method}
                   onChange={(e) =>
                     onFieldChange(
-                      "attachmentRate",
-                      e.target.value === "" ? 0 : Number(e.target.value),
+                      "method",
+                      e.target.value as TransplantMethod | "",
                     )
+                  }
+                  className="px-2 py-1.5 text-sm rounded border border-gray-200 bg-white"
+                >
+                  <option value="">방식</option>
+                  {transplantMethods.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.label} ({m.unit})
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="number"
+                  placeholder="수량"
+                  value={form.count || ""}
+                  onChange={(e) =>
+                    onFieldChange("count", Number(e.target.value))
                   }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <input
                   type="number"
-                  placeholder="생존률 %"
-                  value={form.survivalRate || ""}
+                  placeholder="면적(m²)"
+                  value={form.areaSize || ""}
                   onChange={(e) =>
-                    onFieldChange(
-                      "survivalRate",
-                      e.target.value === "" ? 0 : Number(e.target.value),
-                    )
-                  }
-                  className="px-2 py-1.5 text-sm rounded border border-gray-200"
-                />
-
-                <input
-                  type="number"
-                  placeholder="현재 길이 mm"
-                  value={form.growthLength || ""}
-                  onChange={(e) =>
-                    onFieldChange(
-                      "growthLength",
-                      e.target.value === "" ? 0 : Number(e.target.value),
-                    )
+                    onFieldChange("areaSize", Number(e.target.value))
                   }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <select
-                  value={form.status}
+                  value={form.attachmentStatus}
                   onChange={(e) =>
                     onFieldChange(
-                      "status",
-                      e.target.value as GrowthStatus | "",
+                      "attachmentStatus",
+                      e.target.value as SpeciesAttachmentStatus | "",
                     )
                   }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200 bg-white"
                 >
-                  <option value="">상태</option>
-                  {statusOptions.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
+                  <option value="">착생</option>
+                  {attachmentOptions.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
                     </option>
                   ))}
                 </select>
 
-                <label className="flex items-center gap-2 text-xs px-2 py-1.5 rounded border border-gray-200 bg-white">
-                  <input
-                    type="checkbox"
-                    checked={form.isRepresentative}
-                    onChange={(e) =>
-                      onFieldChange("isRepresentative", e.target.checked)
-                    }
-                    className="w-3 h-3 text-[#2C67BC] border-gray-300 rounded"
-                  />
-                  대표
-                </label>
-
-                <div className="flex justify-end gap-2 sm:justify-start sm:col-span-6">
+                <div className="flex justify-end gap-2 sm:justify-start">
                   <button
                     type="button"
                     onClick={onCancelLog}

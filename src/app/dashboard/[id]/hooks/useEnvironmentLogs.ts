@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getEnvironmentLogs } from "../api/environmentLogs";
-import type { EnvironmentLogEntry } from "../../create/components/environment-log";
+import type { EnvironmentLogEntry } from "../components/environment-log";
 import type { EnvironmentCondition } from "../../create/api/types";
 
 export default function useEnvironmentLogs(areaId: number) {

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Cloud, Plus, ChevronUp } from "lucide-react";
-import type { EnvironmentLogPayload } from "../../api/types";
+import type { EnvironmentLogPayload } from "../../../create/api/types";
 import { EMPTY_FORM, type EnvironmentLogEntry } from "./constants";
 import EnvironmentLogList from "./EnvironmentLogList";
 

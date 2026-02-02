@@ -2,7 +2,7 @@ import type {
   TransplantLogPayload,
   TransplantMethod,
   SpeciesAttachmentStatus,
-} from "../../api/types";
+} from "../../../create/api/types";
 
 // ── 더미 종 데이터 (실제로는 API) ──
 

@@ -1,7 +1,7 @@
 import type {
   EnvironmentLogPayload,
   EnvironmentCondition,
-} from "../../api/types";
+} from "../../../create/api/types";
 
 // ── 상태 옵션 ──
 

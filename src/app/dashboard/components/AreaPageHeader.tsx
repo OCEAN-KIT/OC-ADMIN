@@ -15,7 +15,7 @@ export default function AreaPageHeader() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">작업영역 관리</h1>
           <p className="mt-1 text-gray-500">
-            해양 생태 복원 작업영역을 조회하고 관리합니다.
+            대시보드에 표시 될 작업영역을 조회하고 관리합니다.
           </p>
         </div>
         <Link

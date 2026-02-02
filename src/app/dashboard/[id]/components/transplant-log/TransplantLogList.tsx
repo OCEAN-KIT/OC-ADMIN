@@ -6,7 +6,7 @@ import type {
   TransplantLogPayload,
   TransplantMethod,
   SpeciesAttachmentStatus,
-} from "../../api/types";
+} from "../../../create/api/types";
 import {
   dummySpecies,
   transplantMethods,
@@ -33,6 +33,7 @@ type Props = {
   onRemoveSpecies: (speciesName: string) => void;
   onSaveLogToSpecies: (speciesName: string) => void;
   onCancelLogAdd: () => void;
+  onDeleteLog: (logId: number) => void;
 };
 
 export default function TransplantLogList({
@@ -50,6 +51,7 @@ export default function TransplantLogList({
   onRemoveSpecies,
   onSaveLogToSpecies,
   onCancelLogAdd,
+  onDeleteLog,
 }: Props) {
   const usedSpeciesIds = useMemo(
     () => new Set(sections.map((s) => s.speciesId)),
@@ -125,7 +127,10 @@ export default function TransplantLogList({
               <select
                 value={form.method}
                 onChange={(e) =>
-                  onFieldChange("method", e.target.value as TransplantMethod | "")
+                  onFieldChange(
+                    "method",
+                    e.target.value as TransplantMethod | "",
+                  )
                 }
                 className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white"
               >
@@ -247,6 +252,7 @@ export default function TransplantLogList({
           onFieldChange={onFieldChange}
           onSaveLog={() => onSaveLogToSpecies(sec.speciesName)}
           onCancelLog={onCancelLogAdd}
+          onDeleteLog={onDeleteLog}
         />
       ))}
 

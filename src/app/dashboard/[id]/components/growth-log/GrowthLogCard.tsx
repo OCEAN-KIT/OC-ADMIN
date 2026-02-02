@@ -1,34 +1,26 @@
 "use client";
 
-import { Plus, ChevronUp, ChevronDown } from "lucide-react";
-import type {
-  TransplantLogPayload,
-  TransplantMethod,
-  SpeciesAttachmentStatus,
-} from "../../api/types";
-import {
-  transplantMethods,
-  attachmentOptions,
-  type SpeciesSection,
-} from "./constants";
+import { Plus, ChevronUp, ChevronDown, Star } from "lucide-react";
+import type { GrowthLogPayload, GrowthStatus } from "../../../create/api/types";
+import { statusOptions, type GrowthSpeciesSection } from "./constants";
 
 type Props = {
-  section: SpeciesSection;
+  section: GrowthSpeciesSection;
   isExpanded: boolean;
   onToggle: () => void;
   isAddingLog: boolean;
   onAddLogClick: () => void;
   onRemoveSpecies: () => void;
-  form: TransplantLogPayload;
-  onFieldChange: <K extends keyof TransplantLogPayload>(
+  form: GrowthLogPayload;
+  onFieldChange: <K extends keyof GrowthLogPayload>(
     key: K,
-    value: TransplantLogPayload[K],
+    value: GrowthLogPayload[K],
   ) => void;
   onSaveLog: () => void;
   onCancelLog: () => void;
 };
 
-export default function TransplantLogCard({
+export default function GrowthLogCard({
   section,
   isExpanded,
   onToggle,
@@ -40,9 +32,8 @@ export default function TransplantLogCard({
   onSaveLog,
   onCancelLog,
 }: Props) {
-  const totalCount = section.logs.reduce((sum, r) => sum + r.count, 0);
-  const totalArea = section.logs.reduce((sum, r) => sum + r.areaSize, 0);
-  const unit = section.logs[0]?.unit ?? "";
+  const hasRepresentative = section.logs.some((x) => x.isRepresentative);
+  const latest = section.logs[section.logs.length - 1];
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -60,9 +51,17 @@ export default function TransplantLogCard({
           <span className="font-medium text-gray-900">
             {section.speciesName}
           </span>
+
+          {hasRepresentative && (
+            <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+          )}
+
           <span className="text-xs text-gray-500">
-            ({section.logs.length}회 기록 · 총 {totalCount}
-            {unit} · {totalArea}m²)
+            {section.logs.length === 0
+              ? "(아직 기록 없음)"
+              : `(${section.logs.length}회 기록 · 최근 ${
+                  latest?.growthLength ?? ""
+                }mm)`}
           </span>
         </div>
 
@@ -103,33 +102,33 @@ export default function TransplantLogCard({
                   날짜
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  방식
+                  착생률
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  수량
+                  생존률
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  면적
+                  현재 길이
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
-                  착생
+                  상태
+                </th>
+                <th className="text-left py-2 font-medium text-gray-600">
+                  대표
                 </th>
               </tr>
             </thead>
             <tbody>
-              {section.logs.map((r) => {
-                const statusLabel = attachmentOptions.find(
-                  (o) => o.value === r.attachmentStatus,
+              {section.logs.map((g) => {
+                const statusLabel = statusOptions.find(
+                  (o) => o.value === g.status,
                 );
                 return (
-                  <tr key={r.id} className="border-b last:border-0">
-                    <td className="py-3 text-gray-500">{r.recordDate}</td>
-                    <td className="py-3">{r.methodLabel}</td>
-                    <td className="py-3">
-                      {r.count}
-                      {r.unit}
-                    </td>
-                    <td className="py-3">{r.areaSize}m²</td>
+                  <tr key={g.id} className="border-b last:border-0">
+                    <td className="py-3 text-gray-500">{g.recordDate}</td>
+                    <td className="py-3">{g.attachmentRate}%</td>
+                    <td className="py-3">{g.survivalRate}%</td>
+                    <td className="py-3">{g.growthLength}mm</td>
                     <td className="py-3">
                       {statusLabel && (
                         <span
@@ -145,6 +144,11 @@ export default function TransplantLogCard({
                         </span>
                       )}
                     </td>
+                    <td className="py-3">
+                      {g.isRepresentative && (
+                        <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                      )}
+                    </td>
                   </tr>
                 );
               })}
@@ -155,7 +159,7 @@ export default function TransplantLogCard({
           {isAddingLog && (
             <div className="p-3 rounded-lg border border-[#2C67BC]/30 bg-blue-50/30">
               <p className="text-xs font-medium text-gray-600 mb-2">
-                {section.speciesName} 이식 기록 추가
+                {section.speciesName} 성장 기록 추가
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-6 gap-2">
@@ -166,63 +170,73 @@ export default function TransplantLogCard({
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
-                <select
-                  value={form.method}
-                  onChange={(e) =>
-                    onFieldChange(
-                      "method",
-                      e.target.value as TransplantMethod | "",
-                    )
-                  }
-                  className="px-2 py-1.5 text-sm rounded border border-gray-200 bg-white"
-                >
-                  <option value="">방식</option>
-                  {transplantMethods.map((m) => (
-                    <option key={m.value} value={m.value}>
-                      {m.label} ({m.unit})
-                    </option>
-                  ))}
-                </select>
-
                 <input
                   type="number"
-                  placeholder="수량"
-                  value={form.count || ""}
+                  placeholder="착생률 %"
+                  value={form.attachmentRate || ""}
                   onChange={(e) =>
-                    onFieldChange("count", Number(e.target.value))
+                    onFieldChange(
+                      "attachmentRate",
+                      e.target.value === "" ? 0 : Number(e.target.value),
+                    )
                   }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <input
                   type="number"
-                  placeholder="면적(m²)"
-                  value={form.areaSize || ""}
+                  placeholder="생존률 %"
+                  value={form.survivalRate || ""}
                   onChange={(e) =>
-                    onFieldChange("areaSize", Number(e.target.value))
+                    onFieldChange(
+                      "survivalRate",
+                      e.target.value === "" ? 0 : Number(e.target.value),
+                    )
+                  }
+                  className="px-2 py-1.5 text-sm rounded border border-gray-200"
+                />
+
+                <input
+                  type="number"
+                  placeholder="현재 길이 mm"
+                  value={form.growthLength || ""}
+                  onChange={(e) =>
+                    onFieldChange(
+                      "growthLength",
+                      e.target.value === "" ? 0 : Number(e.target.value),
+                    )
                   }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <select
-                  value={form.attachmentStatus}
+                  value={form.status}
                   onChange={(e) =>
-                    onFieldChange(
-                      "attachmentStatus",
-                      e.target.value as SpeciesAttachmentStatus | "",
-                    )
+                    onFieldChange("status", e.target.value as GrowthStatus | "")
                   }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200 bg-white"
                 >
-                  <option value="">착생</option>
-                  {attachmentOptions.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
+                  <option value="">상태</option>
+                  {statusOptions.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
                     </option>
                   ))}
                 </select>
 
-                <div className="flex justify-end gap-2 sm:justify-start">
+                <label className="flex items-center gap-2 text-xs px-2 py-1.5 rounded border border-gray-200 bg-white">
+                  <input
+                    type="checkbox"
+                    checked={form.isRepresentative}
+                    onChange={(e) =>
+                      onFieldChange("isRepresentative", e.target.checked)
+                    }
+                    className="w-3 h-3 text-[#2C67BC] border-gray-300 rounded"
+                  />
+                  대표
+                </label>
+
+                <div className="flex justify-end gap-2 sm:justify-start sm:col-span-6">
                   <button
                     type="button"
                     onClick={onCancelLog}

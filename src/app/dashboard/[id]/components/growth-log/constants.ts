@@ -1,4 +1,4 @@
-import type { GrowthLogPayload, GrowthStatus } from "../../api/types";
+import type { GrowthLogPayload, GrowthStatus } from "../../../create/api/types";
 
 // ── 더미 종 데이터 (실제로는 API) ──
 

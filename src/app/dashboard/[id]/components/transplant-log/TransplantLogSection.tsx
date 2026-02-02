@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { Leaf, Plus, ChevronUp } from "lucide-react";
-import type { TransplantLogPayload } from "../../api/types";
+import type { TransplantLogPayload } from "../../../create/api/types";
 import {
   dummySpecies,
   transplantMethods,
@@ -11,6 +12,10 @@ import {
   type SpeciesSection,
 } from "./constants";
 import TransplantLogList from "./TransplantLogList";
+import {
+  usePostTransplantLog,
+  useDeleteTransplantLog,
+} from "../../hooks/useTransplantLogMutations";
 
 export type { SpeciesSection } from "./constants";
 
@@ -23,6 +28,10 @@ export default function TransplantLogSection({
   transplantPayload,
   onTransplantChange,
 }: Props) {
+  const { id } = useParams();
+  const areaId = Number(id);
+  const { mutate: postLog } = usePostTransplantLog(areaId);
+  const { mutate: deleteLog } = useDeleteTransplantLog(areaId);
   const [expanded, setExpanded] = useState<string[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [activeSpeciesForLogAdd, setActiveSpeciesForLogAdd] = useState<
@@ -56,10 +65,9 @@ export default function TransplantLogSection({
       ...transplantPayload,
       { speciesId: sp.id, speciesName: sp.name, logs: [entry] },
     ]);
+    postLog(form);
 
-    setExpanded((prev) =>
-      prev.includes(sp.name) ? prev : [...prev, sp.name],
-    );
+    setExpanded((prev) => (prev.includes(sp.name) ? prev : [...prev, sp.name]));
     setShowAddForm(false);
     setActiveSpeciesForLogAdd(null);
     setForm({ ...EMPTY_FORM });
@@ -85,6 +93,7 @@ export default function TransplantLogSection({
           : sec,
       ),
     );
+    postLog(form);
 
     setActiveSpeciesForLogAdd(null);
     setForm({ ...EMPTY_FORM });
@@ -166,6 +175,7 @@ export default function TransplantLogSection({
         onRemoveSpecies={removeSpecies}
         onSaveLogToSpecies={handleAddLogToSpecies}
         onCancelLogAdd={() => setActiveSpeciesForLogAdd(null)}
+        onDeleteLog={deleteLog}
       />
     </section>
   );
