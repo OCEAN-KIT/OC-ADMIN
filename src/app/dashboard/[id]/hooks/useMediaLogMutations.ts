@@ -12,7 +12,7 @@ type PostMediaLogInput = {
 
 type PatchMediaLogInput = {
   logId: number;
-  file: File;
+  file?: File;
   recordDate: string;
   caption: string;
   category: MediaCategory;
@@ -46,10 +46,10 @@ export function usePatchMediaLog(areaId: number) {
   return useMutation({
     mutationKey: ["areas", areaId, "patch-media-log"],
     mutationFn: async (input: PatchMediaLogInput) => {
-      const key = await uploadImage(input.file);
+      const key = input.file ? await uploadImage(input.file) : undefined;
       return patchMediaLog(areaId, input.logId, {
         recordDate: input.recordDate,
-        mediaUrl: key,
+        ...(key && { mediaUrl: key }),
         caption: input.caption,
         category: input.category,
       });

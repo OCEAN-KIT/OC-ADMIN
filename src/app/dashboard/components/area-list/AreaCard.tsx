@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { MapPin, Calendar, Waves, Trash2 } from "lucide-react";
@@ -40,13 +42,10 @@ export default function AreaCard({ area }: Props) {
   };
 
   return (
-    <Link
-      href={`/dashboard/${area.id}`}
-      className="block bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group overflow-hidden"
-    >
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group overflow-hidden">
       <div className="flex">
         {/* 좌측: 기존 카드 컨텐츠 */}
-        <div className="flex-1 p-5">
+        <Link href={`/dashboard/${area.id}`} className="flex-1 p-5">
           {/* 상단: 이름 + 상태 */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
@@ -123,7 +122,7 @@ export default function AreaCard({ area }: Props) {
               </p>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* 우측: 세로 삭제 레일 (카드 높이 전체 차지) */}
         <div className="shrink-0 w-14 sm:w-16 border-l border-gray-100">
@@ -163,6 +162,6 @@ export default function AreaCard({ area }: Props) {
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

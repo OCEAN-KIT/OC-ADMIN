@@ -30,6 +30,8 @@ export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
   const { mutate: postLog } = usePostTransplantLog(areaId);
   const { mutate: deleteLog } = useDeleteTransplantLog(areaId);
 
+  const isValidAreaId = Number.isFinite(areaId);
+
   const [expanded, setExpanded] = useState(false);
   const [isAddingLog, setIsAddingLog] = useState(false);
   const [form, setForm] = useState<TransplantLogPayload>({
@@ -42,11 +44,10 @@ export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
     value: TransplantLogPayload[K],
   ) => setForm((prev) => ({ ...prev, [key]: value }));
 
-  const canSave =
-    !!form.recordDate && !!form.method && !!form.attachmentStatus;
+  const canSave = !!form.recordDate && !!form.method && !!form.attachmentStatus;
 
   const handleSaveLog = () => {
-    if (!canSave) return;
+    if (!canSave || !isValidAreaId) return;
     postLog(form);
     setIsAddingLog(false);
     setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
@@ -58,6 +59,7 @@ export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
   };
 
   const handleAddLogClick = () => {
+    if (!isValidAreaId) return;
     setIsAddingLog(true);
     setExpanded(true);
     setForm({ ...EMPTY_FORM, speciesId: section.speciesId });

@@ -29,9 +29,11 @@ export function useWebPush() {
 
   useEffect(() => {
     let mounted = true;
+    let unsubscribeOnMessage: (() => void) | undefined;
+
     (async () => {
       if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
-        setReady(true);
+        if (mounted) setReady(true);
         return;
       }
 
@@ -46,17 +48,17 @@ export function useWebPush() {
       if (Notification.permission === "default") {
         const p = await Notification.requestPermission();
         if (p !== "granted") {
-          setReady(true);
+          if (mounted) setReady(true);
           return;
         }
       } else if (Notification.permission !== "granted") {
-        setReady(true);
+        if (mounted) setReady(true);
         return;
       }
 
       const messaging = getMessagingSafe();
       if (!messaging) {
-        setReady(true);
+        if (mounted) setReady(true);
         return;
       }
 
@@ -87,18 +89,19 @@ export function useWebPush() {
         }
       }
 
-      onMessage(messaging, (payload: MessagePayload) => {
+      unsubscribeOnMessage = onMessage(messaging, (payload: MessagePayload) => {
         // 포그라운드에서 UI로 전달
         window.dispatchEvent(
           new CustomEvent("foreground-push", { detail: payload }),
         );
       });
 
-      setReady(true);
+      if (mounted) setReady(true);
     })();
 
     return () => {
       mounted = false;
+      unsubscribeOnMessage?.();
     };
   }, []);
 
@@ -107,7 +110,9 @@ export function useWebPush() {
     if (messaging && token) {
       try {
         await deleteToken(messaging);
-      } catch {}
+      } catch (err) {
+        console.error("[push] deleteToken failed:", err);
+      }
       // 서버 삭제 스펙이 토큰만 필요한지, deviceId도 필요한지에 따라 수정
       await fetch(`${BASE_URL}/api/push/tokens/${encodeURIComponent(token)}`, {
         method: "DELETE",

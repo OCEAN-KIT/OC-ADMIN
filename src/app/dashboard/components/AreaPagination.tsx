@@ -1,3 +1,5 @@
+"use client";
+
 type Props = {
   totalPages: number;
   currentPage: number;

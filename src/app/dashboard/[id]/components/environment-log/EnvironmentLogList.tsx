@@ -296,7 +296,7 @@ export default function EnvironmentLogList({
               {entries.map((entry) => (
                 <tr key={entry.id} className="border-b last:border-0">
                   <td className="px-4 py-3 text-gray-500">
-                    {entry.recordDate[0]}.{entry.recordDate[2]}.
+                    {entry.recordDate[0]}.{entry.recordDate[1]}.
                     {entry.recordDate[2]}
                   </td>
                   <td className="px-4 py-3">{entry.temperature}&deg;C</td>
