@@ -1,8 +1,14 @@
 "use client";
 
-import { useRef } from "react";
-import { Camera, Upload, X, ImageIcon, Plus } from "lucide-react";
-import type { MediaLogPayload, MediaCategory } from "../api/types";
+import { useRef, useState } from "react";
+import { useParams } from "next/navigation";
+import { Camera, Upload, X, ImageIcon, Plus, Loader2 } from "lucide-react";
+import { keyToPublicUrl } from "@/utils/s3";
+import {
+  usePostMediaLog,
+  useDeleteMediaLog,
+} from "../hooks/useMediaLogMutations";
+import type { MediaLogPayload, MediaCategory } from "../../create/api/types";
 
 // ── UI 전용 타입 ──
 export type MediaLogEntry = MediaLogPayload & { id: number };
@@ -26,12 +32,14 @@ function UploadZone({
   entries,
   onAdd,
   onRemove,
+  uploading,
 }: {
   category: MediaCategory;
   label: string;
   entries: MediaLogEntry[];
   onAdd: (category: MediaCategory, file: File) => void;
   onRemove: (id: number) => void;
+  uploading: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,9 +69,13 @@ function UploadZone({
         }}
         className="flex flex-col items-center justify-center gap-2 px-4 py-6 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:border-[#2C67BC]/40 hover:bg-blue-50/30 cursor-pointer transition-colors"
       >
-        <Upload className="h-6 w-6 text-gray-400" />
+        {uploading ? (
+          <Loader2 className="h-6 w-6 text-[#2C67BC] animate-spin" />
+        ) : (
+          <Upload className="h-6 w-6 text-gray-400" />
+        )}
         <p className="text-sm text-gray-500">
-          클릭하거나 파일을 드래그하여 업로드
+          {uploading ? "업로드 중..." : "클릭하거나 파일을 드래그하여 업로드"}
         </p>
         <p className="text-xs text-gray-400">JPG, PNG (최대 10MB)</p>
         <input
@@ -86,7 +98,7 @@ function UploadZone({
               {entry.mediaUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={entry.mediaUrl}
+                  src={keyToPublicUrl(entry.mediaUrl)}
                   alt={entry.caption || categoryLabel[category]}
                   className="w-full h-32 object-cover"
                 />
@@ -114,16 +126,16 @@ function UploadZone({
 // ── 타임라인 행 서브 컴포넌트 ──
 function TimelineRow({
   entry,
-  onDateChange,
   onCaptionChange,
   onFileChange,
   onRemove,
+  uploading,
 }: {
   entry: MediaLogEntry;
-  onDateChange: (id: number, date: string) => void;
   onCaptionChange: (id: number, caption: string) => void;
   onFileChange: (id: number, file: File) => void;
   onRemove: (id: number) => void;
+  uploading: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -134,10 +146,14 @@ function TimelineRow({
         onClick={() => inputRef.current?.click()}
         className="shrink-0 w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 overflow-hidden cursor-pointer hover:border-[#2C67BC]/40 transition-colors"
       >
-        {entry.mediaUrl ? (
+        {uploading ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <Loader2 className="h-5 w-5 text-[#2C67BC] animate-spin" />
+          </div>
+        ) : entry.mediaUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={entry.mediaUrl}
+            src={keyToPublicUrl(entry.mediaUrl)}
             alt={entry.caption || "타임라인"}
             className="w-full h-full object-cover"
           />
@@ -164,12 +180,9 @@ function TimelineRow({
       {/* 입력 필드 */}
       <div className="flex-1 space-y-2">
         <div className="flex gap-2">
-          <input
-            type="date"
-            value={entry.recordDate}
-            onChange={(e) => onDateChange(entry.id, e.target.value)}
-            className="px-2.5 py-1.5 text-sm rounded-lg border border-gray-200 bg-white"
-          />
+          <span className="px-2.5 py-1.5 text-sm rounded-lg border border-gray-200 bg-gray-50 text-gray-600">
+            {entry.recordDate || "날짜 없음"}
+          </span>
           <input
             type="text"
             placeholder="캡션 입력..."
@@ -179,7 +192,7 @@ function TimelineRow({
           />
         </div>
 
-        {!entry.mediaUrl && (
+        {!entry.mediaUrl && !uploading && (
           <p className="text-xs text-gray-400">
             좌측 영역을 클릭하여 사진을 선택하세요.
           </p>
@@ -202,6 +215,22 @@ export default function MediaLogSection({
   mediaPayload,
   onMediaChange,
 }: Props) {
+  const { id } = useParams();
+  const areaId = Number(id);
+
+  const { mutateAsync: postMedia, isPending: isPosting } =
+    usePostMediaLog(areaId);
+  const { mutate: deleteMedia } = useDeleteMediaLog(areaId);
+
+  // 카테고리별 업로드 중 상태 추적
+  const [uploadingCategories, setUploadingCategories] = useState<
+    Set<MediaCategory>
+  >(new Set());
+  // 타임라인 행별 업로드 상태
+  const [uploadingTimelineIds, setUploadingTimelineIds] = useState<Set<number>>(
+    new Set(),
+  );
+
   const beforeEntries = mediaPayload.filter((e) => e.category === "BEFORE");
   const afterEntries = mediaPayload.filter((e) => e.category === "AFTER");
   const timelineEntries = mediaPayload.filter(
@@ -210,33 +239,38 @@ export default function MediaLogSection({
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // ── 비포/애프터 파일 추가 ──
-  const handleAdd = (category: MediaCategory, file: File) => {
-    const url = URL.createObjectURL(file);
-    const entry: MediaLogEntry = {
-      id: Date.now() + Math.random(),
-      recordDate: today,
-      mediaUrl: url,
-      caption: "",
-      category,
-    };
-    onMediaChange([...mediaPayload, entry]);
-  };
-
-  // ── 삭제 ──
-  const handleRemove = (id: number) => {
-    const target = mediaPayload.find((e) => e.id === id);
-    if (target?.mediaUrl) {
-      URL.revokeObjectURL(target.mediaUrl);
+  // ── 비포/애프터 파일 추가 (S3 업로드 → API POST) ──
+  const handleAdd = async (category: MediaCategory, file: File) => {
+    setUploadingCategories((prev) => new Set(prev).add(category));
+    try {
+      await postMedia({
+        file,
+        recordDate: today,
+        caption: "",
+        category,
+      });
+    } catch (e) {
+      console.error(e);
+      alert("이미지 업로드에 실패했습니다.");
+    } finally {
+      setUploadingCategories((prev) => {
+        const next = new Set(prev);
+        next.delete(category);
+        return next;
+      });
     }
-    onMediaChange(mediaPayload.filter((e) => e.id !== id));
   };
 
-  // ── 타임라인 행 추가 (빈 행) ──
+  // ── 삭제 (API DELETE) ──
+  const handleRemove = (entryId: number) => {
+    deleteMedia(entryId);
+  };
+
+  // ── 타임라인: 빈 행 추가 후 파일 선택 시 업로드 ──
   const handleAddTimelineRow = () => {
     const entry: MediaLogEntry = {
       id: Date.now() + Math.random(),
-      recordDate: "",
+      recordDate: today,
       mediaUrl: "",
       caption: "",
       category: "TIMELINE",
@@ -244,30 +278,38 @@ export default function MediaLogSection({
     onMediaChange([...mediaPayload, entry]);
   };
 
-  // ── 타임라인 날짜 변경 ──
-  const handleTimelineDateChange = (id: number, date: string) => {
+  // ── 타임라인 캡션 변경 (로컬 상태만) ──
+  const handleTimelineCaptionChange = (entryId: number, caption: string) => {
     onMediaChange(
-      mediaPayload.map((e) => (e.id === id ? { ...e, recordDate: date } : e)),
+      mediaPayload.map((e) => (e.id === entryId ? { ...e, caption } : e)),
     );
   };
 
-  // ── 타임라인 캡션 변경 ──
-  const handleTimelineCaptionChange = (id: number, caption: string) => {
-    onMediaChange(
-      mediaPayload.map((e) => (e.id === id ? { ...e, caption } : e)),
-    );
-  };
+  // ── 타임라인 파일 선택 → S3 업로드 → API POST ──
+  const handleTimelineFileChange = async (entryId: number, file: File) => {
+    const entry = mediaPayload.find((e) => e.id === entryId);
+    if (!entry) return;
 
-  // ── 타임라인 파일 변경 ──
-  const handleTimelineFileChange = (id: number, file: File) => {
-    const target = mediaPayload.find((e) => e.id === id);
-    if (target?.mediaUrl) {
-      URL.revokeObjectURL(target.mediaUrl);
+    setUploadingTimelineIds((prev) => new Set(prev).add(entryId));
+    try {
+      await postMedia({
+        file,
+        recordDate: entry.recordDate || today,
+        caption: entry.caption,
+        category: "TIMELINE",
+      });
+      // 업로드 성공 → 임시 행 제거 (쿼리 리패치로 서버 데이터 반영됨)
+      onMediaChange(mediaPayload.filter((e) => e.id !== entryId));
+    } catch (e) {
+      console.error(e);
+      alert("이미지 업로드에 실패했습니다.");
+    } finally {
+      setUploadingTimelineIds((prev) => {
+        const next = new Set(prev);
+        next.delete(entryId);
+        return next;
+      });
     }
-    const url = URL.createObjectURL(file);
-    onMediaChange(
-      mediaPayload.map((e) => (e.id === id ? { ...e, mediaUrl: url } : e)),
-    );
   };
 
   return (
@@ -294,6 +336,7 @@ export default function MediaLogSection({
               entries={beforeEntries}
               onAdd={handleAdd}
               onRemove={handleRemove}
+              uploading={uploadingCategories.has("BEFORE")}
             />
             <UploadZone
               category="AFTER"
@@ -301,6 +344,7 @@ export default function MediaLogSection({
               entries={afterEntries}
               onAdd={handleAdd}
               onRemove={handleRemove}
+              uploading={uploadingCategories.has("AFTER")}
             />
           </div>
         </div>
@@ -340,10 +384,10 @@ export default function MediaLogSection({
                 <TimelineRow
                   key={entry.id}
                   entry={entry}
-                  onDateChange={handleTimelineDateChange}
                   onCaptionChange={handleTimelineCaptionChange}
                   onFileChange={handleTimelineFileChange}
                   onRemove={handleRemove}
+                  uploading={uploadingTimelineIds.has(entry.id)}
                 />
               ))}
             </div>

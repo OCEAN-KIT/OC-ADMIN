@@ -1,13 +1,20 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { useState } from "react";
+import { useParams } from "next/navigation";
+import { Plus, Trash2 } from "lucide-react";
 import type {
   EnvironmentLogPayload,
   EnvironmentCondition,
 } from "../../../create/api/types";
 import {
+  usePostEnvironmentLog,
+  useDeleteEnvironmentLog,
+} from "../../hooks/useEnvironmentLogMutations";
+import {
   conditionOptions,
   conditionBadge,
+  EMPTY_FORM,
   type EnvironmentLogEntry,
 } from "./constants";
 
@@ -15,26 +22,39 @@ type Props = {
   entries: EnvironmentLogEntry[];
   showAddForm: boolean;
   onShowAddForm: () => void;
-  form: EnvironmentLogPayload;
-  onFieldChange: <K extends keyof EnvironmentLogPayload>(
-    key: K,
-    value: EnvironmentLogPayload[K],
-  ) => void;
-  onSave: () => void;
-  onCancelAddForm: () => void;
-  onRemove: (id: number) => void;
+  onCloseAddForm: () => void;
 };
 
 export default function EnvironmentLogList({
   entries,
   showAddForm,
   onShowAddForm,
-  form,
-  onFieldChange,
-  onSave,
-  onCancelAddForm,
-  onRemove,
+  onCloseAddForm,
 }: Props) {
+  const { id } = useParams();
+  const areaId = Number(id);
+  const { mutate: postLog } = usePostEnvironmentLog(areaId);
+  const { mutate: deleteLog } = useDeleteEnvironmentLog(areaId);
+
+  const [form, setForm] = useState<EnvironmentLogPayload>({ ...EMPTY_FORM });
+
+  const setField = <K extends keyof EnvironmentLogPayload>(
+    key: K,
+    value: EnvironmentLogPayload[K],
+  ) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const handleSave = () => {
+    if (!form.recordDate) return;
+    postLog(form);
+    onCloseAddForm();
+    setForm({ ...EMPTY_FORM });
+  };
+
+  const handleCancel = () => {
+    onCloseAddForm();
+    setForm({ ...EMPTY_FORM });
+  };
+
   return (
     <div className="p-6 space-y-4">
       {/* 빈 상태 안내 */}
@@ -65,7 +85,7 @@ export default function EnvironmentLogList({
               <input
                 type="date"
                 value={form.recordDate}
-                onChange={(e) => onFieldChange("recordDate", e.target.value)}
+                onChange={(e) => setField("recordDate", e.target.value)}
                 className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200"
               />
             </div>
@@ -80,7 +100,7 @@ export default function EnvironmentLogList({
                 step="0.1"
                 value={form.temperature || ""}
                 onChange={(e) =>
-                  onFieldChange(
+                  setField(
                     "temperature",
                     e.target.value === "" ? 0 : Number(e.target.value),
                   )
@@ -100,7 +120,7 @@ export default function EnvironmentLogList({
                 step="0.1"
                 value={form.dissolvedOxygen || ""}
                 onChange={(e) =>
-                  onFieldChange(
+                  setField(
                     "dissolvedOxygen",
                     e.target.value === "" ? 0 : Number(e.target.value),
                   )
@@ -118,7 +138,7 @@ export default function EnvironmentLogList({
                 step="0.1"
                 value={form.nutrient || ""}
                 onChange={(e) =>
-                  onFieldChange(
+                  setField(
                     "nutrient",
                     e.target.value === "" ? 0 : Number(e.target.value),
                   )
@@ -134,7 +154,7 @@ export default function EnvironmentLogList({
               <select
                 value={form.visibility}
                 onChange={(e) =>
-                  onFieldChange(
+                  setField(
                     "visibility",
                     e.target.value as EnvironmentCondition | "",
                   )
@@ -156,7 +176,7 @@ export default function EnvironmentLogList({
               <select
                 value={form.current}
                 onChange={(e) =>
-                  onFieldChange(
+                  setField(
                     "current",
                     e.target.value as EnvironmentCondition | "",
                   )
@@ -178,10 +198,7 @@ export default function EnvironmentLogList({
               <select
                 value={form.surge}
                 onChange={(e) =>
-                  onFieldChange(
-                    "surge",
-                    e.target.value as EnvironmentCondition | "",
-                  )
+                  setField("surge", e.target.value as EnvironmentCondition | "")
                 }
                 className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white"
               >
@@ -200,10 +217,7 @@ export default function EnvironmentLogList({
               <select
                 value={form.wave}
                 onChange={(e) =>
-                  onFieldChange(
-                    "wave",
-                    e.target.value as EnvironmentCondition | "",
-                  )
+                  setField("wave", e.target.value as EnvironmentCondition | "")
                 }
                 className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white"
               >
@@ -221,14 +235,14 @@ export default function EnvironmentLogList({
           <div className="mt-4 flex justify-end gap-2">
             <button
               type="button"
-              onClick={onCancelAddForm}
+              onClick={handleCancel}
               className="px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white hover:bg-gray-50"
             >
               취소
             </button>
             <button
               type="button"
-              onClick={onSave}
+              onClick={handleSave}
               className="px-3 py-2 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
             >
               저장
@@ -274,7 +288,8 @@ export default function EnvironmentLogList({
               {entries.map((entry) => (
                 <tr key={entry.id} className="border-b last:border-0">
                   <td className="px-4 py-3 text-gray-500">
-                    {entry.recordDate}
+                    {entry.recordDate[0]}.{entry.recordDate[2]}.
+                    {entry.recordDate[2]}
                   </td>
                   <td className="px-4 py-3">{entry.temperature}&deg;C</td>
                   <td className="px-4 py-3">{entry.dissolvedOxygen}mg/L</td>
@@ -298,10 +313,10 @@ export default function EnvironmentLogList({
                   <td className="px-4 py-3">
                     <button
                       type="button"
-                      onClick={() => onRemove(entry.id)}
-                      className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-red-500"
+                      onClick={() => deleteLog(entry.id)}
+                      className="p-1 rounded hover:bg-rose-50 text-gray-400 hover:text-rose-500 transition-colors"
                     >
-                      <X className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </td>
                 </tr>

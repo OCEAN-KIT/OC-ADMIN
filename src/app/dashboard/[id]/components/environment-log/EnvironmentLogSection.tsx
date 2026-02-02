@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { Cloud, Plus, ChevronUp } from "lucide-react";
-import type { EnvironmentLogPayload } from "../../../create/api/types";
-import { EMPTY_FORM, type EnvironmentLogEntry } from "./constants";
+import { type EnvironmentLogEntry } from "./constants";
 import EnvironmentLogList from "./EnvironmentLogList";
 
 export type { EnvironmentLogEntry } from "./constants";
@@ -15,36 +14,8 @@ type Props = {
 
 export default function EnvironmentLogSection({
   environmentPayload,
-  onEnvironmentChange,
 }: Props) {
   const [showAddForm, setShowAddForm] = useState(false);
-  const [form, setForm] = useState<EnvironmentLogPayload>({ ...EMPTY_FORM });
-
-  const setField = <K extends keyof EnvironmentLogPayload>(
-    key: K,
-    value: EnvironmentLogPayload[K],
-  ) => setForm((prev) => ({ ...prev, [key]: value }));
-
-  // ── 기록 추가 ──
-
-  const handleAdd = () => {
-    if (!form.recordDate) return;
-
-    const entry: EnvironmentLogEntry = {
-      ...form,
-      id: Date.now(),
-    };
-
-    onEnvironmentChange([...environmentPayload, entry]);
-    setShowAddForm(false);
-    setForm({ ...EMPTY_FORM });
-  };
-
-  // ── 기록 삭제 ──
-
-  const handleRemove = (id: number) => {
-    onEnvironmentChange(environmentPayload.filter((e) => e.id !== id));
-  };
 
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -52,15 +23,12 @@ export default function EnvironmentLogSection({
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
         <h2 className="font-semibold text-gray-900 flex items-center gap-2">
           <Cloud className="h-5 w-5 text-[#2C67BC]" />
-          환경 로그 입력 (날짜별 기록 누적)
+          환경 로그 (날짜별 기록 누적)
         </h2>
 
         <button
           type="button"
-          onClick={() => {
-            setShowAddForm((v) => !v);
-            setForm({ ...EMPTY_FORM });
-          }}
+          onClick={() => setShowAddForm((v) => !v)}
           className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
         >
           {showAddForm ? (
@@ -75,15 +43,8 @@ export default function EnvironmentLogSection({
       <EnvironmentLogList
         entries={environmentPayload}
         showAddForm={showAddForm}
-        onShowAddForm={() => {
-          setShowAddForm(true);
-          setForm({ ...EMPTY_FORM });
-        }}
-        form={form}
-        onFieldChange={setField}
-        onSave={handleAdd}
-        onCancelAddForm={() => setShowAddForm(false)}
-        onRemove={handleRemove}
+        onShowAddForm={() => setShowAddForm(true)}
+        onCloseAddForm={() => setShowAddForm(false)}
       />
     </section>
   );

@@ -4,16 +4,6 @@ import type {
   SpeciesAttachmentStatus,
 } from "../../../create/api/types";
 
-// ── 더미 종 데이터 (실제로는 API) ──
-
-export const dummySpecies = [
-  { id: 1, name: "감태" },
-  { id: 2, name: "모자반" },
-  { id: 3, name: "대황" },
-  { id: 4, name: "미역" },
-  { id: 5, name: "다시마" },
-];
-
 // ── 이식 방식 옵션 ──
 
 export const transplantMethods: {

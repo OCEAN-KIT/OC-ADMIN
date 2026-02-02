@@ -7,8 +7,8 @@ import type {
   TransplantMethod,
   SpeciesAttachmentStatus,
 } from "../../../create/api/types";
+import { useSpecies } from "@/hooks/useSpecies";
 import {
-  dummySpecies,
   transplantMethods,
   attachmentOptions,
   type SpeciesSection,
@@ -26,14 +26,7 @@ type Props = {
   ) => void;
   onSaveNewSpecies: () => void;
   onCancelAddForm: () => void;
-  expanded: string[];
-  onToggleExpand: (name: string) => void;
-  activeSpeciesForLogAdd: string | null;
-  onAddLogClick: (speciesName: string, speciesId: number) => void;
   onRemoveSpecies: (speciesName: string) => void;
-  onSaveLogToSpecies: (speciesName: string) => void;
-  onCancelLogAdd: () => void;
-  onDeleteLog: (logId: number) => void;
 };
 
 export default function TransplantLogList({
@@ -44,17 +37,12 @@ export default function TransplantLogList({
   onFieldChange,
   onSaveNewSpecies,
   onCancelAddForm,
-  expanded,
-  onToggleExpand,
-  activeSpeciesForLogAdd,
-  onAddLogClick,
   onRemoveSpecies,
-  onSaveLogToSpecies,
-  onCancelLogAdd,
-  onDeleteLog,
 }: Props) {
-  const usedSpeciesIds = useMemo(
-    () => new Set(sections.map((s) => s.speciesId)),
+  const { data: speciesList = [] } = useSpecies();
+
+  const usedSpeciesNames = useMemo(
+    () => new Set(sections.map((s) => s.speciesName)),
     [sections],
   );
 
@@ -109,8 +97,8 @@ export default function TransplantLogList({
                 className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white"
               >
                 <option value={0}>종 선택</option>
-                {dummySpecies
-                  .filter((s) => !usedSpeciesIds.has(s.id))
+                {speciesList
+                  .filter((s) => !usedSpeciesNames.has(s.name))
                   .map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name}
@@ -243,16 +231,7 @@ export default function TransplantLogList({
         <TransplantLogCard
           key={sec.speciesName}
           section={sec}
-          isExpanded={expanded.includes(sec.speciesName)}
-          onToggle={() => onToggleExpand(sec.speciesName)}
-          isAddingLog={activeSpeciesForLogAdd === sec.speciesName}
-          onAddLogClick={() => onAddLogClick(sec.speciesName, sec.speciesId)}
           onRemoveSpecies={() => onRemoveSpecies(sec.speciesName)}
-          form={form}
-          onFieldChange={onFieldChange}
-          onSaveLog={() => onSaveLogToSpecies(sec.speciesName)}
-          onCancelLog={onCancelLogAdd}
-          onDeleteLog={onDeleteLog}
         />
       ))}
 

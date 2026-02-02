@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { Plus, ChevronUp, ChevronDown, Trash2 } from "lucide-react";
 import type {
   TransplantLogPayload,
@@ -7,41 +9,57 @@ import type {
   SpeciesAttachmentStatus,
 } from "../../../create/api/types";
 import {
+  usePostTransplantLog,
+  useDeleteTransplantLog,
+} from "../../hooks/useTransplantLogMutations";
+import {
   transplantMethods,
   attachmentOptions,
+  EMPTY_FORM,
   type SpeciesSection,
 } from "./constants";
 
 type Props = {
   section: SpeciesSection;
-  isExpanded: boolean;
-  onToggle: () => void;
-  isAddingLog: boolean;
-  onAddLogClick: () => void;
   onRemoveSpecies: () => void;
-  form: TransplantLogPayload;
-  onFieldChange: <K extends keyof TransplantLogPayload>(
-    key: K,
-    value: TransplantLogPayload[K],
-  ) => void;
-  onSaveLog: () => void;
-  onCancelLog: () => void;
-  onDeleteLog: (logId: number) => void;
 };
 
-export default function TransplantLogCard({
-  section,
-  isExpanded,
-  onToggle,
-  isAddingLog,
-  onAddLogClick,
-  onRemoveSpecies,
-  form,
-  onFieldChange,
-  onSaveLog,
-  onCancelLog,
-  onDeleteLog,
-}: Props) {
+export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
+  const { id } = useParams();
+  const areaId = Number(id);
+  const { mutate: postLog } = usePostTransplantLog(areaId);
+  const { mutate: deleteLog } = useDeleteTransplantLog(areaId);
+
+  const [expanded, setExpanded] = useState(false);
+  const [isAddingLog, setIsAddingLog] = useState(false);
+  const [form, setForm] = useState<TransplantLogPayload>({
+    ...EMPTY_FORM,
+    speciesId: section.speciesId,
+  });
+
+  const setField = <K extends keyof TransplantLogPayload>(
+    key: K,
+    value: TransplantLogPayload[K],
+  ) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const handleSaveLog = () => {
+    if (!form.recordDate || !form.method) return;
+    postLog(form);
+    setIsAddingLog(false);
+    setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
+  };
+
+  const handleCancelLog = () => {
+    setIsAddingLog(false);
+    setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
+  };
+
+  const handleAddLogClick = () => {
+    setIsAddingLog(true);
+    setExpanded(true);
+    setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
+  };
+
   const totalCount = section.logs.reduce((sum, r) => sum + r.count, 0);
   const totalArea = section.logs.reduce((sum, r) => sum + r.areaSize, 0);
   const unit = section.logs[0]?.unit ?? "";
@@ -51,10 +69,10 @@ export default function TransplantLogCard({
       {/* 헤더 */}
       <div
         className="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
-        onClick={onToggle}
+        onClick={() => setExpanded((v) => !v)}
       >
         <div className="flex items-center gap-3">
-          {isExpanded ? (
+          {expanded ? (
             <ChevronUp className="h-4 w-4 text-gray-500" />
           ) : (
             <ChevronDown className="h-4 w-4 text-gray-500" />
@@ -73,7 +91,7 @@ export default function TransplantLogCard({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onAddLogClick();
+              handleAddLogClick();
             }}
             className="flex items-center gap-1 px-2 py-1 text-xs rounded bg-[#2C67BC]/10 text-[#2C67BC] hover:bg-[#2C67BC]/20"
           >
@@ -95,7 +113,7 @@ export default function TransplantLogCard({
       </div>
 
       {/* 바디 */}
-      {isExpanded && (
+      {expanded && (
         <div className="p-4 space-y-3">
           {/* 테이블 */}
           <table className="w-full text-sm">
@@ -126,7 +144,9 @@ export default function TransplantLogCard({
                 );
                 return (
                   <tr key={r.id} className="border-b last:border-0">
-                    <td className="py-3 text-gray-500">{r.recordDate}</td>
+                    <td className="py-3 text-gray-500">
+                      {r.recordDate[0]}.{r.recordDate[1]}.{r.recordDate[2]}
+                    </td>
                     <td className="py-3">{r.methodLabel}</td>
                     <td className="py-3">
                       {r.count}
@@ -151,7 +171,7 @@ export default function TransplantLogCard({
                     <td className="py-3 text-right">
                       <button
                         type="button"
-                        onClick={() => onDeleteLog(r.id)}
+                        onClick={() => deleteLog(r.id)}
                         className="p-1 rounded hover:bg-rose-50 text-gray-400 hover:text-rose-500 transition-colors"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -174,17 +194,14 @@ export default function TransplantLogCard({
                 <input
                   type="date"
                   value={form.recordDate}
-                  onChange={(e) => onFieldChange("recordDate", e.target.value)}
+                  onChange={(e) => setField("recordDate", e.target.value)}
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <select
                   value={form.method}
                   onChange={(e) =>
-                    onFieldChange(
-                      "method",
-                      e.target.value as TransplantMethod | "",
-                    )
+                    setField("method", e.target.value as TransplantMethod | "")
                   }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200 bg-white"
                 >
@@ -200,9 +217,7 @@ export default function TransplantLogCard({
                   type="number"
                   placeholder="수량"
                   value={form.count || ""}
-                  onChange={(e) =>
-                    onFieldChange("count", Number(e.target.value))
-                  }
+                  onChange={(e) => setField("count", Number(e.target.value))}
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
@@ -210,16 +225,14 @@ export default function TransplantLogCard({
                   type="number"
                   placeholder="면적(m²)"
                   value={form.areaSize || ""}
-                  onChange={(e) =>
-                    onFieldChange("areaSize", Number(e.target.value))
-                  }
+                  onChange={(e) => setField("areaSize", Number(e.target.value))}
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <select
                   value={form.attachmentStatus}
                   onChange={(e) =>
-                    onFieldChange(
+                    setField(
                       "attachmentStatus",
                       e.target.value as SpeciesAttachmentStatus | "",
                     )
@@ -237,14 +250,14 @@ export default function TransplantLogCard({
                 <div className="flex justify-end gap-2 sm:justify-start">
                   <button
                     type="button"
-                    onClick={onCancelLog}
+                    onClick={handleCancelLog}
                     className="px-2 py-1 text-xs rounded border border-gray-300 bg-white hover:bg-gray-50"
                   >
                     취소
                   </button>
                   <button
                     type="button"
-                    onClick={onSaveLog}
+                    onClick={handleSaveLog}
                     className="px-2 py-1 text-xs rounded bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90"
                   >
                     저장

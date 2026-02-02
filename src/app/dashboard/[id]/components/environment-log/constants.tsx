@@ -9,9 +9,9 @@ export const conditionOptions: {
   value: EnvironmentCondition;
   label: string;
 }[] = [
-  { value: "GOOD", label: "양호" },
+  { value: "GOOD", label: "좋음" },
   { value: "NORMAL", label: "보통" },
-  { value: "POOR", label: "미흡" },
+  { value: "POOR", label: "나쁨" },
 ];
 
 export const conditionBadge = (value: EnvironmentCondition) => {
