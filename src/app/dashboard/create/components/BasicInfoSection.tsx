@@ -64,7 +64,7 @@ export default function BasicInfoSection({
             ) : (
               <Pencil className="h-4 w-4" />
             )}
-            수정하기
+            수정 제출
           </button>
         )}
       </div>

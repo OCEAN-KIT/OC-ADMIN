@@ -7,7 +7,7 @@ import {
   deleteToken,
   type MessagePayload,
 } from "firebase/messaging";
-import { getMessagingSafe } from "@/lib/firebase";
+import { getMessagingSafe } from "@/libs/firebase";
 
 const VAPID_KEY = process.env.NEXT_PUBLIC_FB_VAPID_KEY!;
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
@@ -40,7 +40,7 @@ export function useWebPush() {
         {
           scope: "/",
           updateViaCache: "none",
-        }
+        },
       );
 
       if (Notification.permission === "default") {
@@ -90,7 +90,7 @@ export function useWebPush() {
       onMessage(messaging, (payload: MessagePayload) => {
         // 포그라운드에서 UI로 전달
         window.dispatchEvent(
-          new CustomEvent("foreground-push", { detail: payload })
+          new CustomEvent("foreground-push", { detail: payload }),
         );
       });
 

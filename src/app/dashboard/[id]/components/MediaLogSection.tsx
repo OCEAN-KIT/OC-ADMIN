@@ -11,6 +11,7 @@ import {
   Loader2,
   RefreshCw,
   Check,
+  Trash2,
 } from "lucide-react";
 import { keyToPublicUrl } from "@/utils/s3";
 import {
@@ -131,15 +132,18 @@ function TimelineSavedRow({
   entry: MediaLogEntry;
   onRemove: (id: number) => void;
 }) {
+  const [y, m, d] = entry.recordDate;
+  const dateText = `${y}년 ${m}월 ${d}일`;
+
   return (
-    <div className="flex items-start gap-3 p-3 rounded-lg border border-gray-200 bg-white">
-      {/* 썸네일 */}
-      <div className="shrink-0 w-20 h-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+    <div className="flex items-stretch rounded-xl border border-gray-200 bg-white overflow-hidden">
+      {/* 왼쪽: 썸네일 (원래 느낌 유지) */}
+      <div className="shrink-0 w-24 h-24 sm:w-28 sm:h-28 border-r border-gray-100 bg-gray-50">
         {entry.mediaUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={keyToPublicUrl(entry.mediaUrl)}
-            alt={entry.caption || "타임라인"}
+            alt={entry.caption || dateText}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -149,23 +153,30 @@ function TimelineSavedRow({
         )}
       </div>
 
-      {/* 정보 */}
-      <div className="flex-1 min-w-0">
-        <p className="text-xs text-gray-400">
-          {entry.recordDate[0]}.{entry.recordDate[1]}.{entry.recordDate[2]}
+      {/* 가운데: 날짜 강조 + 캡션(덜 중요) */}
+      <div className="flex-1 min-w-0 p-3">
+        <p className="text-base sm:text-lg font-semibold text-gray-900 tracking-tight">
+          {dateText}
         </p>
-        <p className="text-sm text-gray-800 mt-0.5 break-words">
-          {entry.caption || "(캡션 없음)"}
-        </p>
+
+        {entry.caption ? (
+          <p className="mt-1 text-xs text-gray-500 line-clamp-2">
+            {entry.caption}
+          </p>
+        ) : (
+          <p className="mt-1 text-xs text-gray-300">(캡션 없음)</p>
+        )}
       </div>
 
-      {/* 삭제 */}
+      {/* 오른쪽: 세로 삭제 레일 (휴지통 디자인) */}
       <button
         type="button"
         onClick={() => onRemove(entry.id)}
-        className="shrink-0 p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-red-500 transition-colors"
+        className="shrink-0 w-14 sm:w-16 grid place-items-center border-l border-gray-100 bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+        aria-label="삭제"
+        title="삭제"
       >
-        <X className="h-4 w-4" />
+        <Trash2 className="h-5 w-5" />
       </button>
     </div>
   );

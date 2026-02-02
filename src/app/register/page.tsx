@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { registerSchema, RegisterFormData } from "@/lib/validation/register";
+import { registerSchema, RegisterFormData } from "@/libs/validation/register";
 import { signUp1, signUp2, signUp3 } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
