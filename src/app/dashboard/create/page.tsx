@@ -3,60 +3,49 @@
 import { useState } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
-import {
-  ChevronRight,
-  ArrowLeft,
-  MapPin,
-  Calendar,
-  Waves,
-  Ruler,
-  Activity,
-} from "lucide-react";
+import { ChevronRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { ClipLoader } from "react-spinners";
 import BasicInfoSection from "./components/BasicInfoSection";
+import usePostBasicInfo from "./hooks/usePostBasicInfo";
+import { BASIC_PAYLOAD_INIT } from "./api/types";
+import type { BasicPayload } from "./api/types";
 
 export default function CreateAreaPage() {
   const { checking } = useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
+  const { mutate, isPending } = usePostBasicInfo();
 
-  // 폼 상태
-  const [formData, setFormData] = useState({
-    name: "",
-    restorationRegion: "",
-    startDate: "",
-    endDate: "",
-    habitat: "",
-    depth: "",
-    areaSize: "",
-    level: "",
-    attachmentStatus: "",
-    lat: "",
-    lon: "",
-  });
+  // ── 기본정보 상태 ──
+  const [basicPayload, setBasicPayload] =
+    useState<BasicPayload>(BASIC_PAYLOAD_INIT);
 
-  const handleChange = (
+  const handleBasicChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    setBasicPayload((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: API 연동
-    console.log("Submit:", formData);
-    alert("작업영역이 생성되었습니다. (디자인 미리보기)");
-    router.push("/dashboard");
+  const handleNextStep = () => {
+    mutate(basicPayload, {
+      onSuccess: (data) => {
+        router.push(`/dashboard/${data.data.id}`);
+      },
+    });
   };
 
   if (checking) {
     return (
       <div className="flex h-[calc(100vh-64px)] items-center justify-center">
-        <div className="text-gray-500">로딩 중...</div>
+        <ClipLoader color="#2C67BC" size={40} />
       </div>
     );
   }
-
+  // TODO: 미입력 필드 프론트단 방지 or 백엔드 에러 받아서
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50">
       <div className="mx-auto max-w-[900px] p-4">
@@ -91,10 +80,27 @@ export default function CreateAreaPage() {
           </div>
         </div>
 
-        {/* 폼 */}
-        <form onSubmit={handleSubmit}>
-          <BasicInfoSection />
-        </form>
+        <div className="space-y-6">
+          <BasicInfoSection
+            basicPayload={basicPayload}
+            onBasicChange={handleBasicChange}
+          />
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              onClick={handleNextStep}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <ClipLoader size={20} color="#FFFFFF" />
+              ) : (
+                "다음단계"
+              )}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

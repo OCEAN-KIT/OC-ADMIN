@@ -1,9 +1,9 @@
 // src/hooks/useAuthGuard.ts
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import axiosInstance from "@/utils/axiosInstance";
+import { useMyInfo } from "./useMyInfo";
 
 type Mode = "gotoLogin" | "gotoHome";
 
@@ -24,35 +24,18 @@ export function useAuthGuard({
   homePath = "/home",
   includeNext = true,
 }: Options) {
-  const [checking, setChecking] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data, isLoading, isError } = useMyInfo();
   const router = useRouter();
   const pathname = usePathname();
 
-  // 1) 로그인 상태 확인
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        await axiosInstance.get("/api/user/my/info", { withCredentials: true });
-        if (alive) setIsLoggedIn(true);
-      } catch {
-        if (alive) setIsLoggedIn(false);
-      } finally {
-        if (alive) setChecking(false);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const checking = isLoading;
+  const isLoggedIn = !isLoading && !isError && !!data;
 
-  // 2) 모드별 리다이렉트
+  // 모드별 리다이렉트
   useEffect(() => {
     if (checking) return;
 
     if (mode === "gotoLogin" && !isLoggedIn) {
-      // 이미 로그인 페이지면 중복 이동 방지
       if (pathname?.startsWith(loginPath)) return;
       const url =
         includeNext && pathname

@@ -8,9 +8,7 @@ export function useMyInfo() {
   return useQuery({
     queryKey: ["myInfo"],
     queryFn: myInfo,
-    refetchOnMount: "always",
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: "always",
-    staleTime: 0,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
   });
 }
