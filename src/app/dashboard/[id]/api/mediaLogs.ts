@@ -22,6 +22,18 @@ export async function postMediaLog(
   return res.data;
 }
 
+export async function patchMediaLog(
+  areaId: number,
+  logId: number,
+  payload: MediaLogPayload,
+): Promise<ApiResponse<null>> {
+  const res = await axiosInstance.patch<ApiResponse<null>>(
+    `/api/dashboard/areas/${areaId}/media-logs/${logId}`,
+    payload,
+  );
+  return res.data;
+}
+
 export async function deleteMediaLog(
   areaId: number,
   logId: number,
