@@ -22,6 +22,7 @@ type Props = {
   onSaveNewSpecies: () => void;
   onCancelAddForm: () => void;
   onRemoveSpecies: (speciesName: string) => void;
+  onToggleRepresentative: (speciesId: number) => void;
 };
 
 export default function GrowthLogList({
@@ -33,6 +34,7 @@ export default function GrowthLogList({
   onSaveNewSpecies,
   onCancelAddForm,
   onRemoveSpecies,
+  onToggleRepresentative,
 }: Props) {
   const { data: speciesList = [] } = useSpecies();
 
@@ -203,6 +205,7 @@ export default function GrowthLogList({
           key={sec.speciesName}
           section={sec}
           onRemoveSpecies={() => onRemoveSpecies(sec.speciesName)}
+          onToggleRepresentative={() => onToggleRepresentative(sec.speciesId)}
         />
       ))}
 

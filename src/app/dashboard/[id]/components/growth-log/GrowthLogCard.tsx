@@ -6,7 +6,6 @@ import { Plus, ChevronUp, ChevronDown, Star, Trash2 } from "lucide-react";
 import type { GrowthLogPayload, GrowthStatus } from "../../../create/api/types";
 import {
   usePostGrowthLog,
-  usePatchGrowthLog,
   useDeleteGrowthLog,
 } from "../../hooks/useGrowthLogMutations";
 import {
@@ -18,13 +17,13 @@ import {
 type Props = {
   section: GrowthSpeciesSection;
   onRemoveSpecies: () => void;
+  onToggleRepresentative: () => void;
 };
 
-export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
+export default function GrowthLogCard({ section, onRemoveSpecies, onToggleRepresentative }: Props) {
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
-  const { mutate: patchLog } = usePatchGrowthLog(areaId);
   const { mutate: deleteLog } = useDeleteGrowthLog(areaId);
 
   const [expanded, setExpanded] = useState(false);
@@ -46,14 +45,6 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
     postLog(form);
     setIsAddingLog(false);
     setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
-  };
-
-  const handleSetRepresentative = () => {
-    if (!latest) return;
-    patchLog({
-      logId: latest.id,
-      payload: { ...latest, isRepresentative: true },
-    });
   };
 
   const handleCancelLog = () => {
@@ -102,24 +93,21 @@ export default function GrowthLogCard({ section, onRemoveSpecies }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          {hasRepresentative ? (
-            <span className="flex items-center gap-1 px-2 py-1 text-xs rounded bg-amber-50 text-amber-700 border border-amber-200">
-              <Star className="h-3 w-3 fill-amber-500" />
-              대표종
-            </span>
-          ) : (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSetRepresentative();
-              }}
-              className="flex items-center gap-1 px-2 py-1 text-xs rounded bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
-            >
-              <Star className="h-3 w-3" />
-              대표종으로 지정
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleRepresentative();
+            }}
+            className={`flex items-center gap-1 px-2 py-1 text-xs rounded border transition-colors ${
+              hasRepresentative
+                ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
+            }`}
+          >
+            <Star className={`h-3 w-3 ${hasRepresentative ? "fill-amber-500 text-amber-500" : ""}`} />
+            {hasRepresentative ? "대표종" : "대표종으로 지정"}
+          </button>
 
           <button
             type="button"

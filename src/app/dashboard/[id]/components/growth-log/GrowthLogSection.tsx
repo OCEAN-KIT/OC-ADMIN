@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { TrendingUp, Plus, ChevronUp } from "lucide-react";
 import type { GrowthLogPayload } from "../../../create/api/types";
-import { usePostGrowthLog } from "../../hooks/useGrowthLogMutations";
+import {
+  usePostGrowthLog,
+  usePatchGrowthLog,
+} from "../../hooks/useGrowthLogMutations";
 import { useSpecies } from "@/hooks/useSpecies";
 import {
   EMPTY_FORM,
@@ -27,6 +30,7 @@ export default function GrowthLogSection({
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
+  const { mutate: patchLog } = usePatchGrowthLog(areaId);
   const { data: speciesList = [] } = useSpecies();
   const [showAddForm, setShowAddForm] = useState(false);
   const [form, setForm] = useState<GrowthLogPayload>({ ...EMPTY_FORM });
@@ -56,6 +60,32 @@ export default function GrowthLogSection({
 
     setShowAddForm(false);
     setForm({ ...EMPTY_FORM });
+  };
+
+  // ── 대표종 토글 ──
+
+  const handleToggleRepresentative = (targetSpeciesId: number) => {
+    // 현재 대표종 로그 찾기 (모든 섹션에서)
+    for (const sec of growthPayload) {
+      const repLog = sec.logs.find((x) => x.isRepresentative);
+      if (repLog) {
+        // 같은 종이면 해제만
+        if (sec.speciesId === targetSpeciesId) {
+          patchLog({ logId: repLog.id, payload: { ...repLog, isRepresentative: false } });
+          return;
+        }
+        // 다른 종이면 기존 해제
+        patchLog({ logId: repLog.id, payload: { ...repLog, isRepresentative: false } });
+        break;
+      }
+    }
+
+    // 새 대표종 설정
+    const targetSec = growthPayload.find((s) => s.speciesId === targetSpeciesId);
+    const latest = targetSec?.logs[targetSec.logs.length - 1];
+    if (latest) {
+      patchLog({ logId: latest.id, payload: { ...latest, isRepresentative: true } });
+    }
   };
 
   // ── 종 제거 ──
@@ -106,6 +136,7 @@ export default function GrowthLogSection({
         onSaveNewSpecies={handleAddSpeciesWithFirstLog}
         onCancelAddForm={() => setShowAddForm(false)}
         onRemoveSpecies={removeSpecies}
+        onToggleRepresentative={handleToggleRepresentative}
       />
     </section>
   );
