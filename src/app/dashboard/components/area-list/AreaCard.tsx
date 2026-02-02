@@ -103,8 +103,10 @@ export default function AreaCard({ area }: Props) {
           <p className="text-xs text-gray-400">기간</p>
           <p className="font-medium text-gray-900 flex items-center gap-1">
             <Calendar className="h-3.5 w-3.5 text-gray-400" />
-            {area.startDate}
-            {area.endDate ? ` ~ ${area.endDate}` : " ~"}
+            {area.startDate[0]}.{area.startDate[1]}.{area.startDate[2]}
+            {area.endDate
+              ? ` ~ ${area.endDate[0]}.${area.endDate[1]}.${area.endDate[2]}`
+              : " ~"}
           </p>
         </div>
         <div>
