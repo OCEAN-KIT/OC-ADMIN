@@ -1,7 +1,8 @@
 "use client";
 
 import type { ChangeEvent } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, Pencil } from "lucide-react";
+import { ClipLoader } from "react-spinners";
 import type { BasicPayload } from "../api/types";
 
 // ── select 옵션 ──
@@ -33,22 +34,39 @@ const attachmentOptions = [
 type Props = {
   basicPayload: BasicPayload;
   onBasicChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-  disabledFields?: string[];
+  onEdit?: () => void;
+  isEditing?: boolean;
 };
 
 export default function BasicInfoSection({
   basicPayload,
   onBasicChange,
-  disabledFields = [],
+  onEdit,
+  isEditing,
 }: Props) {
-  const isDisabled = (field: string) => disabledFields.includes(field);
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="px-6 py-4 bg-gray-50 border-b border-gray-100">
+      <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
         <h2 className="font-semibold text-gray-900 flex items-center gap-2">
           <MapPin className="h-5 w-5 text-[#2C67BC]" />
           작업영역 기본 정보
         </h2>
+
+        {onEdit && (
+          <button
+            type="button"
+            onClick={onEdit}
+            disabled={isEditing}
+            className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg bg-[#2C67BC] text-white hover:bg-[#2C67BC]/90 disabled:opacity-50"
+          >
+            {isEditing ? (
+              <ClipLoader color="#fff" size={14} />
+            ) : (
+              <Pencil className="h-4 w-4" />
+            )}
+            수정하기
+          </button>
+        )}
       </div>
 
       <div className="p-6 space-y-5">
@@ -168,12 +186,9 @@ export default function BasicInfoSection({
               name="level"
               value={basicPayload.level}
               onChange={onBasicChange}
-              disabled={isDisabled("level")}
-              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("level") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
             >
-              <option value="">
-                {isDisabled("level") ? "?? 불러올 수 없음" : "선택하세요"}
-              </option>
+              <option value="">선택하세요</option>
               {levelOptions.map((l) => (
                 <option key={l.value} value={l.value}>
                   {l.label}
@@ -194,14 +209,9 @@ export default function BasicInfoSection({
               name="attachmentStatus"
               value={basicPayload.attachmentStatus}
               onChange={onBasicChange}
-              disabled={isDisabled("attachmentStatus")}
-              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("attachmentStatus") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
             >
-              <option value="">
-                {isDisabled("attachmentStatus")
-                  ? "?? 불러올 수 없음"
-                  : "선택하세요"}
-              </option>
+              <option value="">선택하세요</option>
               {attachmentOptions.map((s) => (
                 <option key={s.value} value={s.value}>
                   {s.label}
@@ -264,17 +274,14 @@ export default function BasicInfoSection({
               위도(lat) <span className="text-rose-500">*</span>
             </label>
             <input
-              type={isDisabled("lat") ? "text" : "number"}
+              type="number"
               id="lat"
               name="lat"
-              value={isDisabled("lat") ? "" : basicPayload.lat || ""}
+              value={basicPayload.lat || ""}
               onChange={onBasicChange}
-              placeholder={
-                isDisabled("lat") ? "?? 불러올 수 없음" : "예: 36.0190"
-              }
+              placeholder="예: 36.0190"
               step="0.0001"
-              disabled={isDisabled("lat")}
-              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("lat") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
             />
           </div>
 
@@ -286,17 +293,14 @@ export default function BasicInfoSection({
               경도(lon) <span className="text-rose-500">*</span>
             </label>
             <input
-              type={isDisabled("lon") ? "text" : "number"}
+              type="number"
               id="lon"
               name="lon"
-              value={isDisabled("lon") ? "" : basicPayload.lon || ""}
+              value={basicPayload.lon || ""}
               onChange={onBasicChange}
-              placeholder={
-                isDisabled("lon") ? "?? 불러올 수 없음" : "예: 129.3430"
-              }
+              placeholder="예: 129.3430"
               step="0.0001"
-              disabled={isDisabled("lon")}
-              className={`w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] ${isDisabled("lon") ? "bg-gray-100 text-gray-400 cursor-not-allowed" : ""}`}
+              className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
             />
           </div>
         </div>

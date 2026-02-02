@@ -54,11 +54,10 @@ export default function MainHeader() {
   const handleLogout = async () => {
     try {
       await logOut();
-      router.replace("/login");
     } finally {
-      queryClient.removeQueries({ queryKey: ["myInfo"] });
-      router.refresh();
+      queryClient.removeQueries();
       setOpen(false);
+      router.replace("/login");
     }
   };
 

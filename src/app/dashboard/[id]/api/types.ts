@@ -20,12 +20,15 @@ export type AreaOverview = {
   name: string;
   areaId: number;
   restorationRegion: string;
-  startDate: string;
-  endDate: string;
+  startDate: string | number[];
+  endDate: string | number[];
   currentStatus: { name: string; description: string };
   areaSize: number;
   avgDepth: number;
   habitatType: string;
+  lat: number;
+  lon: number;
+  attachmentStatus: string;
 };
 
 export type AreaDetailData = {

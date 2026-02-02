@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAreaDetail } from "../api/areaDetail";
 import type { BasicPayload } from "../../create/api/types";
+import {
+  toRegionCode,
+  toHabitatCode,
+  toLevelCode,
+  toAttachmentStatusCode,
+  toDateString,
+} from "@/libs/mappers";
 
 export default function useAreaDetail(id: number) {
   return useQuery({
@@ -11,18 +18,24 @@ export default function useAreaDetail(id: number) {
       const o = res.data.overview;
       return {
         name: o.name,
-        restorationRegion:
-          o.restorationRegion as BasicPayload["restorationRegion"],
-        startDate: o.startDate,
-        endDate: o.endDate || undefined,
-        habitat: o.habitatType as BasicPayload["habitat"],
+        restorationRegion: toRegionCode(
+          o.restorationRegion,
+        ) as BasicPayload["restorationRegion"],
+        startDate: toDateString(o.startDate),
+        endDate: toDateString(o.endDate) || undefined,
+        habitat: toHabitatCode(
+          o.habitatType,
+        ) as BasicPayload["habitat"],
         depth: o.avgDepth,
         areaSize: o.areaSize,
-        // 상세조회 API에 없는 필드 → 불러올 수 없음
-        level: "",
-        attachmentStatus: "",
-        lat: 0,
-        lon: 0,
+        level: toLevelCode(
+          o.currentStatus.name,
+        ) as BasicPayload["level"],
+        attachmentStatus: toAttachmentStatusCode(
+          o.attachmentStatus,
+        ) as BasicPayload["attachmentStatus"],
+        lat: o.lat,
+        lon: o.lon,
       };
     },
   });

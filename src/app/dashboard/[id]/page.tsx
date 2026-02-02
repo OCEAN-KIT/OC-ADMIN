@@ -22,6 +22,7 @@ import useTransplantLogs from "./hooks/useTransplantLogs";
 import useGrowthLogs from "./hooks/useGrowthLogs";
 import useEnvironmentLogs from "./hooks/useEnvironmentLogs";
 import useMediaLogs from "./hooks/useMediaLogs";
+import useUpdateBasicInfo from "./hooks/useUpdateBasicInfo";
 
 export default function EditAreaPage() {
   const { checking } = useAuthGuard({ mode: "gotoLogin" });
@@ -35,6 +36,9 @@ export default function EditAreaPage() {
   const { data: growthData, isLoading: l3 } = useGrowthLogs(areaId);
   const { data: envData, isLoading: l4 } = useEnvironmentLogs(areaId);
   const { data: mediaData, isLoading: l5 } = useMediaLogs(areaId);
+
+  const { mutate: updateBasic, isPending: isUpdatingBasic } =
+    useUpdateBasicInfo(areaId);
 
   const isLoading = l1 || l2 || l3 || l4 || l5;
 
@@ -153,7 +157,8 @@ export default function EditAreaPage() {
           <BasicInfoSection
             basicPayload={basicPayload}
             onBasicChange={handleBasicChange}
-            disabledFields={["level", "attachmentStatus", "lat", "lon"]}
+            onEdit={() => updateBasic(basicPayload)}
+            isEditing={isUpdatingBasic}
           />
 
           <TransplantLogSection
