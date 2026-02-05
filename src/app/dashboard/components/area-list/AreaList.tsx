@@ -9,7 +9,7 @@ export default function AreaList({ areas }: Props) {
   return (
     <div className="grid gap-4">
       {areas.length === 0 ? (
-        <div className="p-10 rounded-xl border border-dashed border-gray-300 bg-gray-50 text-center">
+        <div className="p-10 bg-gray-50 text-center">
           <p className="text-sm text-gray-700 font-medium">
             조건에 맞는 작업영역이 없습니다.
           </p>
