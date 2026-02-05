@@ -64,7 +64,6 @@ export type GrowthLogItem = {
   recordDate: string;
   speciesId: number;
   speciesName: string;
-  isRepresentative: boolean;
   attachmentRate: number;
   survivalRate: number;
   growthLength: number;

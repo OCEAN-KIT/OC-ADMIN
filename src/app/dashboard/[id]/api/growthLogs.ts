@@ -2,6 +2,20 @@ import axiosInstance from "@/utils/axiosInstance";
 import type { ApiResponse, GrowthLogPayload } from "../../create/api/types";
 import type { GrowthLogsResponse } from "./types";
 
+export type RepresentativeSpeciesData = {
+  speciesId: number | null;
+  speciesName: string | null;
+};
+
+export async function getRepresentativeSpecies(
+  areaId: number,
+): Promise<ApiResponse<RepresentativeSpeciesData>> {
+  const res = await axiosInstance.get<ApiResponse<RepresentativeSpeciesData>>(
+    `/api/dashboard/areas/${areaId}/representative-species`,
+  );
+  return res.data;
+}
+
 export async function getGrowthLogs(
   areaId: number,
 ): Promise<GrowthLogsResponse> {

@@ -22,7 +22,6 @@ export type GrowthSpeciesSection = {
 
 export const EMPTY_FORM: GrowthLogPayload = {
   speciesId: 0,
-  isRepresentative: false,
   recordDate: "",
   attachmentRate: 0,
   survivalRate: 0,

@@ -8,6 +8,7 @@ import {
   usePostGrowthLog,
   usePatchRepresentativeSpecies,
 } from "../../hooks/useGrowthLogMutations";
+import { useRepresentativeSpecies } from "../../hooks/useGrowthLogs";
 import { useSpecies } from "@/hooks/useSpecies";
 import {
   EMPTY_FORM,
@@ -31,6 +32,7 @@ export default function GrowthLogSection({
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
   const { mutate: patchRepresentativeSpecies } = usePatchRepresentativeSpecies(areaId);
+  const { data: representativeSpecies } = useRepresentativeSpecies(areaId);
   const { data: speciesList = [] } = useSpecies();
   const [showAddForm, setShowAddForm] = useState(false);
   const [form, setForm] = useState<GrowthLogPayload>({ ...EMPTY_FORM });
@@ -65,13 +67,8 @@ export default function GrowthLogSection({
   // ── 대표종 토글 ──
 
   const handleToggleRepresentative = (targetSpeciesId: number) => {
-    // 현재 대표종 확인
-    const currentRep = growthPayload.find((sec) =>
-      sec.logs.some((x) => x.isRepresentative)
-    );
-
     // 같은 종이면 해제, 다른 종이면 새로 설정
-    if (currentRep?.speciesId === targetSpeciesId) {
+    if (representativeSpecies?.speciesId === targetSpeciesId) {
       patchRepresentativeSpecies(null);
     } else {
       patchRepresentativeSpecies(targetSpeciesId);
@@ -116,6 +113,7 @@ export default function GrowthLogSection({
 
       <GrowthLogList
         sections={growthPayload}
+        representativeSpeciesId={representativeSpecies?.speciesId ?? null}
         showAddForm={showAddForm}
         onShowAddForm={() => {
           setShowAddForm(true);

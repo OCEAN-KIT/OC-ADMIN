@@ -16,11 +16,12 @@ import {
 
 type Props = {
   section: GrowthSpeciesSection;
+  isRepresentative: boolean;
   onRemoveSpecies: () => void;
   onToggleRepresentative: () => void;
 };
 
-export default function GrowthLogCard({ section, onRemoveSpecies, onToggleRepresentative }: Props) {
+export default function GrowthLogCard({ section, isRepresentative, onRemoveSpecies, onToggleRepresentative }: Props) {
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
@@ -58,7 +59,6 @@ export default function GrowthLogCard({ section, onRemoveSpecies, onToggleRepres
     setForm({ ...EMPTY_FORM, speciesId: section.speciesId });
   };
 
-  const hasRepresentative = section.logs.some((x) => x.isRepresentative);
   const latest = section.logs[section.logs.length - 1];
 
   return (
@@ -75,7 +75,7 @@ export default function GrowthLogCard({ section, onRemoveSpecies, onToggleRepres
             <ChevronDown className="h-4 w-4 text-gray-500" />
           )}
 
-          {hasRepresentative && (
+          {isRepresentative && (
             <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
           )}
 
@@ -100,13 +100,13 @@ export default function GrowthLogCard({ section, onRemoveSpecies, onToggleRepres
               onToggleRepresentative();
             }}
             className={`flex items-center gap-1 px-2 py-1 text-xs rounded border transition-colors ${
-              hasRepresentative
+              isRepresentative
                 ? "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
                 : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
             }`}
           >
-            <Star className={`h-3 w-3 ${hasRepresentative ? "fill-amber-500 text-amber-500" : ""}`} />
-            {hasRepresentative ? "대표종" : "대표종으로 지정"}
+            <Star className={`h-3 w-3 ${isRepresentative ? "fill-amber-500 text-amber-500" : ""}`} />
+            {isRepresentative ? "대표종" : "대표종으로 지정"}
           </button>
 
           <button

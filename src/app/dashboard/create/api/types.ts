@@ -58,7 +58,6 @@ export type GrowthStatus = "GOOD" | "NORMAL" | "POOR";
 
 export type GrowthLogPayload = {
   speciesId: number;
-  isRepresentative: boolean;
   recordDate: string;
   attachmentRate: number;
   survivalRate: number;

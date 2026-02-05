@@ -60,7 +60,7 @@ export function usePatchRepresentativeSpecies(areaId: number) {
       patchRepresentativeSpecies(areaId, speciesId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "growth-logs"],
+        queryKey: ["areas", areaId, "representative-species"],
       });
     },
   });
