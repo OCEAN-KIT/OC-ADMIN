@@ -6,7 +6,7 @@ import { TrendingUp, Plus, ChevronUp } from "lucide-react";
 import type { GrowthLogPayload } from "../../../create/api/types";
 import {
   usePostGrowthLog,
-  usePatchGrowthLog,
+  usePatchRepresentativeSpecies,
 } from "../../hooks/useGrowthLogMutations";
 import { useSpecies } from "@/hooks/useSpecies";
 import {
@@ -30,7 +30,7 @@ export default function GrowthLogSection({
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
-  const { mutate: patchLog } = usePatchGrowthLog(areaId);
+  const { mutate: patchRepresentativeSpecies } = usePatchRepresentativeSpecies(areaId);
   const { data: speciesList = [] } = useSpecies();
   const [showAddForm, setShowAddForm] = useState(false);
   const [form, setForm] = useState<GrowthLogPayload>({ ...EMPTY_FORM });
@@ -65,26 +65,16 @@ export default function GrowthLogSection({
   // ── 대표종 토글 ──
 
   const handleToggleRepresentative = (targetSpeciesId: number) => {
-    // 현재 대표종 로그 찾기 (모든 섹션에서)
-    for (const sec of growthPayload) {
-      const repLog = sec.logs.find((x) => x.isRepresentative);
-      if (repLog) {
-        // 같은 종이면 해제만
-        if (sec.speciesId === targetSpeciesId) {
-          patchLog({ logId: repLog.id, payload: { ...repLog, isRepresentative: false } });
-          return;
-        }
-        // 다른 종이면 기존 해제
-        patchLog({ logId: repLog.id, payload: { ...repLog, isRepresentative: false } });
-        break;
-      }
-    }
+    // 현재 대표종 확인
+    const currentRep = growthPayload.find((sec) =>
+      sec.logs.some((x) => x.isRepresentative)
+    );
 
-    // 새 대표종 설정
-    const targetSec = growthPayload.find((s) => s.speciesId === targetSpeciesId);
-    const latest = targetSec?.logs[targetSec.logs.length - 1];
-    if (latest) {
-      patchLog({ logId: latest.id, payload: { ...latest, isRepresentative: true } });
+    // 같은 종이면 해제, 다른 종이면 새로 설정
+    if (currentRep?.speciesId === targetSpeciesId) {
+      patchRepresentativeSpecies(null);
+    } else {
+      patchRepresentativeSpecies(targetSpeciesId);
     }
   };
 

@@ -43,3 +43,14 @@ export async function deleteGrowthLog(
   );
   return res.data;
 }
+
+export async function patchRepresentativeSpecies(
+  areaId: number,
+  speciesId: number | null,
+): Promise<ApiResponse<null>> {
+  const res = await axiosInstance.patch<ApiResponse<null>>(
+    `/api/dashboard/areas/${areaId}/representative-species`,
+    { speciesId },
+  );
+  return res.data;
+}

@@ -156,9 +156,6 @@ export default function GrowthLogCard({ section, onRemoveSpecies, onToggleRepres
                 <th className="text-left py-2 font-medium text-gray-600">
                   상태
                 </th>
-                <th className="text-left py-2 font-medium text-gray-600">
-                  대표
-                </th>
                 <th className="w-10 py-2" />
               </tr>
             </thead>
@@ -188,11 +185,6 @@ export default function GrowthLogCard({ section, onRemoveSpecies, onToggleRepres
                         >
                           {statusLabel.label}
                         </span>
-                      )}
-                    </td>
-                    <td className="py-3">
-                      {g.isRepresentative && (
-                        <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
                       )}
                     </td>
                     <td className="py-3 text-right">

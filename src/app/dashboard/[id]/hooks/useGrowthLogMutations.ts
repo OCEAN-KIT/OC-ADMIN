@@ -3,6 +3,7 @@ import {
   postGrowthLog,
   patchGrowthLog,
   deleteGrowthLog,
+  patchRepresentativeSpecies,
 } from "../api/growthLogs";
 import type { GrowthLogPayload } from "../../create/api/types";
 
@@ -42,6 +43,21 @@ export function useDeleteGrowthLog(areaId: number) {
   return useMutation({
     mutationKey: ["areas", areaId, "delete-growth-log"],
     mutationFn: (logId: number) => deleteGrowthLog(areaId, logId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["areas", areaId, "growth-logs"],
+      });
+    },
+  });
+}
+
+export function usePatchRepresentativeSpecies(areaId: number) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["areas", areaId, "patch-representative-species"],
+    mutationFn: (speciesId: number | null) =>
+      patchRepresentativeSpecies(areaId, speciesId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["areas", areaId, "growth-logs"],
