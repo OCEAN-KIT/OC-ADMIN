@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, Plus, Pencil, Trash2, Check, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useSpecies } from "@/hooks/useSpecies";
 import {
   useCreateSpecies,
@@ -12,6 +13,7 @@ import {
 
 export default function SpeciesCreatePage() {
   const router = useRouter();
+  const { checking } = useAuthGuard({ mode: "gotoLogin" });
   const { data, isLoading } = useSpecies();
   const createMutation = useCreateSpecies();
   const deleteMutation = useDeleteSpecies();
@@ -87,7 +89,7 @@ export default function SpeciesCreatePage() {
 
         {/* 종 목록 */}
         <div className="bg-white rounded-lg border border-gray-200">
-          {isLoading ? (
+          {checking || isLoading ? (
             <div className="p-8 text-center text-gray-500">로딩 중...</div>
           ) : !data?.length ? (
             <div className="p-8 text-center text-gray-500">

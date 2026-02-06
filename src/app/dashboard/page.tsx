@@ -44,7 +44,10 @@ export default function DashboardPage() {
         <AreaPageHeader />
         <AreaSearchFilter
           filters={filters}
-          onFiltersChange={setFilters}
+          onFiltersChange={(newFilters) => {
+            setFilters(newFilters);
+            setCurrentPage(1);
+          }}
           onSearch={() => setCurrentPage(1)}
         />
 
