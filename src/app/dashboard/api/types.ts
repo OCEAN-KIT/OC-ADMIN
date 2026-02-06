@@ -36,3 +36,12 @@ export type PagedAreaData = {
 };
 
 export type AreasResponse = ApiResponse<PagedAreaData>;
+
+export type AreaFilters = {
+  region: string;
+  level: ProjectLevel | "";
+  habitat: HabitatType | "";
+  from: string;
+  to: string;
+  keyword: string;
+};

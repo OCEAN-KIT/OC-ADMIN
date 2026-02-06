@@ -30,10 +30,22 @@ export default function CreateAreaPage() {
     }));
   };
 
+  const isValid =
+    basicPayload.name.trim() !== "" &&
+    basicPayload.restorationRegion !== "" &&
+    basicPayload.startDate !== "" &&
+    basicPayload.habitat !== "" &&
+    basicPayload.level !== "" &&
+    basicPayload.attachmentStatus !== "" &&
+    basicPayload.depth > 0 &&
+    basicPayload.areaSize > 0 &&
+    basicPayload.lat !== 0 &&
+    basicPayload.lon !== 0;
+
   const handleNextStep = () => {
     mutate(basicPayload, {
       onSuccess: (data) => {
-        router.push(`/dashboard/${data.data.id}`);
+        router.replace(`/dashboard/${data.data.id}`);
       },
     });
   };
@@ -45,23 +57,12 @@ export default function CreateAreaPage() {
       </div>
     );
   }
-  // TODO: 미입력 필드 프론트단 방지 or 백엔드 에러 받아서
+
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50">
       <div className="mx-auto max-w-[900px] p-4">
         {/* 페이지 헤더 */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <Link href="/home" className="hover:text-gray-700">
-              홈
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/dashboard" className="hover:text-gray-700">
-              대시보드 관리
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-900">작업영역 추가</span>
-          </div>
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.back()}
@@ -69,11 +70,11 @@ export default function CreateAreaPage() {
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
-            <div>
+            <div className="flex w-full justify-between gap-3">
               <h1 className="text-2xl font-bold text-gray-900">
                 새 작업영역 추가
               </h1>
-              <p className="mt-1 text-gray-500">
+              <p className="text-sm text-gray-500 self-end">
                 해양 생태 복원 프로젝트의 새로운 작업영역을 등록합니다.
               </p>
             </div>
@@ -91,7 +92,7 @@ export default function CreateAreaPage() {
               type="button"
               className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
               onClick={handleNextStep}
-              disabled={isPending}
+              disabled={isPending || !isValid}
             >
               {isPending ? (
                 <ClipLoader size={20} color="#FFFFFF" />

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getGrowthLogs } from "../api/growthLogs";
+import { getGrowthLogs, getRepresentativeSpecies } from "../api/growthLogs";
 import type { GrowthSpeciesSection } from "../components/growth-log";
 import type { GrowthStatus } from "../../create/api/types";
 
@@ -22,7 +22,6 @@ export default function useGrowthLogs(areaId: number) {
         map.get(item.speciesId)!.logs.push({
           id: item.id,
           speciesId: item.speciesId,
-          isRepresentative: item.isRepresentative,
           recordDate: item.recordDate,
           attachmentRate: item.attachmentRate,
           survivalRate: item.survivalRate,
@@ -33,5 +32,14 @@ export default function useGrowthLogs(areaId: number) {
 
       return Array.from(map.values());
     },
+  });
+}
+
+export function useRepresentativeSpecies(areaId: number) {
+  return useQuery({
+    queryKey: ["areas", areaId, "representative-species"],
+    queryFn: () => getRepresentativeSpecies(areaId),
+    enabled: areaId > 0,
+    select: (res) => res.data,
   });
 }

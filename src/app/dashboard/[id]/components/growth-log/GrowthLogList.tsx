@@ -12,6 +12,7 @@ import GrowthLogCard from "./GrowthLogCard";
 
 type Props = {
   sections: GrowthSpeciesSection[];
+  representativeSpeciesId: number | null;
   showAddForm: boolean;
   onShowAddForm: () => void;
   form: GrowthLogPayload;
@@ -27,6 +28,7 @@ type Props = {
 
 export default function GrowthLogList({
   sections,
+  representativeSpeciesId,
   showAddForm,
   onShowAddForm,
   form,
@@ -204,6 +206,7 @@ export default function GrowthLogList({
         <GrowthLogCard
           key={sec.speciesName}
           section={sec}
+          isRepresentative={representativeSpeciesId === sec.speciesId}
           onRemoveSpecies={() => onRemoveSpecies(sec.speciesName)}
           onToggleRepresentative={() => onToggleRepresentative(sec.speciesId)}
         />

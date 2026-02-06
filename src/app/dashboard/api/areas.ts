@@ -1,9 +1,20 @@
 import axiosInstance from "@/utils/axiosInstance";
-import type { AreasResponse } from "./types";
+import type { AreaFilters, AreasResponse } from "./types";
 
-export async function getAreas(page: number): Promise<AreasResponse> {
+export async function getAreas(
+  page: number,
+  filters: AreaFilters,
+): Promise<AreasResponse> {
   const res = await axiosInstance.get<AreasResponse>("/api/dashboard/areas", {
-    params: { page },
+    params: {
+      page,
+      ...(filters.region && { region: filters.region }),
+      ...(filters.level && { level: filters.level }),
+      ...(filters.habitat && { habitat: filters.habitat }),
+      ...(filters.from && { from: filters.from }),
+      ...(filters.to && { to: filters.to }),
+      ...(filters.keyword && { keyword: filters.keyword }),
+    },
   });
 
   return res.data;

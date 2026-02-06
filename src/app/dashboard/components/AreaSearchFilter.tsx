@@ -1,36 +1,51 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, ArrowUpDown } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import {
-  sortLabels,
   type RestorationRegion,
   type ProjectLevel,
   type HabitatType,
-  type AreaSort,
 } from "./area-list/constants";
+import type { AreaFilters } from "../api/types";
 
-export default function AreaSearchFilter() {
-  const [keyword, setKeyword] = useState("");
-  const [region, setRegion] = useState<RestorationRegion>("");
-  const [level, setLevel] = useState<ProjectLevel>("");
-  const [habitat, setHabitat] = useState<HabitatType>("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [sort, setSort] = useState<AreaSort>("ID_DESC");
+type Props = {
+  filters: AreaFilters;
+  onFiltersChange: (filters: AreaFilters) => void;
+  onSearch: () => void;
+};
+
+export default function AreaSearchFilter({
+  filters,
+  onFiltersChange,
+  onSearch,
+}: Props) {
   const [showFilters, setShowFilters] = useState(false);
 
+  const updateFilter = <K extends keyof AreaFilters>(
+    key: K,
+    value: AreaFilters[K],
+  ) => {
+    onFiltersChange({ ...filters, [key]: value });
+  };
+
   const hasActiveFilters =
-    keyword || region || level || habitat || fromDate || toDate;
+    filters.keyword ||
+    filters.region ||
+    filters.level ||
+    filters.habitat ||
+    filters.from ||
+    filters.to;
 
   const clearFilters = () => {
-    setKeyword("");
-    setRegion("");
-    setLevel("");
-    setHabitat("");
-    setFromDate("");
-    setToDate("");
-    setSort("ID_DESC");
+    onFiltersChange({
+      region: "",
+      level: "",
+      habitat: "",
+      from: "",
+      to: "",
+      keyword: "",
+    });
   };
 
   return (
@@ -41,8 +56,9 @@ export default function AreaSearchFilter() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            value={filters.keyword}
+            onChange={(e) => updateFilter("keyword", e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && onSearch()}
             placeholder="작업영역 이름으로 검색..."
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
           />
@@ -64,20 +80,6 @@ export default function AreaSearchFilter() {
               </span>
             )}
           </button>
-          <div className="relative">
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as AreaSort)}
-              className="appearance-none pl-4 pr-10 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] cursor-pointer"
-            >
-              {Object.entries(sortLabels).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <ArrowUpDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-          </div>
         </div>
       </div>
 
@@ -91,9 +93,9 @@ export default function AreaSearchFilter() {
                 복원 지역
               </label>
               <select
-                value={region}
+                value={filters.region}
                 onChange={(e) =>
-                  setRegion(e.target.value as RestorationRegion)
+                  updateFilter("region", e.target.value as RestorationRegion)
                 }
                 className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
               >
@@ -109,8 +111,8 @@ export default function AreaSearchFilter() {
                 프로젝트 단계
               </label>
               <select
-                value={level}
-                onChange={(e) => setLevel(e.target.value as ProjectLevel)}
+                value={filters.level}
+                onChange={(e) => updateFilter("level", e.target.value as ProjectLevel | "")}
                 className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
               >
                 <option value="">전체</option>
@@ -127,8 +129,8 @@ export default function AreaSearchFilter() {
                 서식지 유형
               </label>
               <select
-                value={habitat}
-                onChange={(e) => setHabitat(e.target.value as HabitatType)}
+                value={filters.habitat}
+                onChange={(e) => updateFilter("habitat", e.target.value as HabitatType | "")}
                 className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
               >
                 <option value="">전체</option>
@@ -146,15 +148,15 @@ export default function AreaSearchFilter() {
               <div className="flex items-center gap-2">
                 <input
                   type="date"
-                  value={fromDate}
-                  onChange={(e) => setFromDate(e.target.value)}
+                  value={filters.from}
+                  onChange={(e) => updateFilter("from", e.target.value)}
                   className="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] text-sm"
                 />
                 <span className="text-gray-400">~</span>
                 <input
                   type="date"
-                  value={toDate}
-                  onChange={(e) => setToDate(e.target.value)}
+                  value={filters.to}
+                  onChange={(e) => updateFilter("to", e.target.value)}
                   className="flex-1 px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC] text-sm"
                 />
               </div>

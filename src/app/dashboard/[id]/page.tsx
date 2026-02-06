@@ -124,17 +124,6 @@ export default function EditAreaPage() {
       <div className="mx-auto max-w-[900px] p-4">
         {/* 페이지 헤더 */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <Link href="/home" className="hover:text-gray-700">
-              홈
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <Link href="/dashboard" className="hover:text-gray-700">
-              대시보드 관리
-            </Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-900">작업영역 수정</span>
-          </div>
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.back()}
@@ -142,11 +131,11 @@ export default function EditAreaPage() {
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
-            <div>
+            <div className="flex w-full justify-between gap-3">
               <h1 className="text-2xl font-bold text-gray-900">
                 작업영역 수정
               </h1>
-              <p className="mt-1 text-gray-500">
+              <p className="text-sm  text-gray-500 self-end">
                 작업영역의 정보를 수정합니다.
               </p>
             </div>
