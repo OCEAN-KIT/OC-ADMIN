@@ -70,11 +70,11 @@ export default function CreateAreaPage() {
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
-            <div>
+            <div className="flex w-full justify-between gap-3">
               <h1 className="text-2xl font-bold text-gray-900">
                 새 작업영역 추가
               </h1>
-              <p className="mt-1 text-gray-500">
+              <p className="text-sm text-gray-500 self-end">
                 해양 생태 복원 프로젝트의 새로운 작업영역을 등록합니다.
               </p>
             </div>
