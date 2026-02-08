@@ -64,7 +64,7 @@ export default function ReviewCard({
   }
 
   const isPending = review.status === "pending";
-  const isSelectable = isPending || review.status === "approved";
+  const isSelectable = isPending;
   const statusChip =
     review.status === "approved"
       ? {

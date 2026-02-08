@@ -135,6 +135,7 @@ export default function HomePage() {
       <RejectModal
         open={rejectOpen}
         ids={rejectIds}
+        loading={rejectOne.isPending || bulkReject.isPending}
         onClose={closeReject}
         onSubmit={({ reason }) =>
           rejectIds.length === 1

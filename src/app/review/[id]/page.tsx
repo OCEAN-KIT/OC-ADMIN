@@ -34,12 +34,6 @@ export default function ReviewPage() {
 
   const detail = data?.data;
 
-  useEffect(() => {
-    if (detail) {
-      console.log("[ReviewPage] detail payload:", detail);
-    }
-  }, [detail]);
-
   if (isError || !detail) {
     return (
       <div className="mx-auto max-w-[1100px] p-2">
@@ -69,6 +63,13 @@ export default function ReviewPage() {
         detail={detail}
         onExport={() => csvExportByIds([Number(detail.submissionId)])}
       />
+
+      {detail.rejectReason && (
+        <div className="mb-4 rounded-xl bg-rose-50 px-5 py-3 text-sm text-rose-600 ring-1 ring-rose-200">
+          <span className="font-semibold">반려 사유:</span>{" "}
+          {detail.rejectReason}
+        </div>
+      )}
 
       {/* 단일 카드 안에 모든 데이터 */}
       <div className="rounded-2xl bg-white px-6 py-5 ring-1 ring-black/5">
