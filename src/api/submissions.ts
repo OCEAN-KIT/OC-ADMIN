@@ -25,8 +25,8 @@ type Reason = { templateCode?: string; message: string };
 const compact = (obj: Record<string, unknown>) =>
   Object.fromEntries(
     Object.entries(obj).filter(
-      ([, v]) => v !== null && v !== undefined && v !== ""
-    )
+      ([, v]) => v !== null && v !== undefined && v !== "",
+    ),
   );
 
 // 스웨거 스펙에 맞추어 필터 정규화
@@ -169,7 +169,7 @@ export async function fetchSubmissions(params: {
 export async function approveSubmission(id: string) {
   try {
     const { data } = await axiosInstance.post(
-      `/api/admin/submissions/${id}/approve`
+      `/api/admin/submissions/${id}/approve`,
     );
     return data;
   } catch (err) {
@@ -181,7 +181,7 @@ export async function rejectSubmission(id: string, reason: Reason) {
   try {
     const { data } = await axiosInstance.post(
       `/api/admin/submissions/${id}/reject`,
-      { reason }
+      { reason },
     );
     return data;
   } catch (err) {
@@ -193,7 +193,7 @@ export async function bulkApprove(ids: string[]) {
   try {
     const { data } = await axiosInstance.post(
       `/api/admin/submissions/bulk/approve`,
-      { ids }
+      { ids },
     );
     return data;
   } catch (err) {
@@ -205,7 +205,7 @@ export async function bulkReject(ids: string[], reason: Reason) {
   try {
     const { data } = await axiosInstance.post(
       `/api/admin/submissions/bulk/reject`,
-      { ids, reason }
+      { ids, reason },
     );
     return data;
   } catch (err) {
@@ -233,42 +233,84 @@ export async function bulkDelete(ids: string[]) {
   }
 }
 
-/* =========================
-   상세 조회 (스웨거 응답 타입)
-   ========================= */
+import type { ActivityType, EnvStatus, HealthGrade } from "@/types/activity";
+
 export type SubmissionDetailServer = {
   submissionId: number;
   siteName: string;
-  activityType: "URCHIN_REMOVAL" | "TRASH_COLLECTION" | string;
-  submittedAt: string;
+  activityType: ActivityType;
+  recordDate?: string;
+  divingRound?: number;
+  workDescription?: string;
+  submittedAt: number[];
   status: "PENDING" | "APPROVED" | "REJECTED" | "DELETED";
   authorName: string;
   authorEmail: string;
   attachmentCount: number;
   feedbackText?: string;
-  latitude?: number;
-  longitude?: number;
+
+  // 공통 환경 정보
   basicEnv?: {
     recordDate?: string;
-    startTime?: { hour: number; minute: number; second: number; nano: number };
-    endTime?: { hour: number; minute: number; second: number; nano: number };
+    avgDepthM?: number;
+    maxDepthM?: number;
     waterTempC?: number;
-    visibilityM?: number;
-    depthM?: number;
-    currentState?: string;
-    weather?: string;
+    visibilityStatus?: EnvStatus;
+    waveStatus?: EnvStatus;
+    surgeStatus?: EnvStatus;
+    currentStatus?: EnvStatus;
   };
+
+  // 참여자 정보
   participants?: {
-    leaderName?: string;
-    participantCount?: number;
-    role?: string;
+    participantNames?: string;
   };
-  activity?: {
-    type?: string;
-    details?: string;
-    collectionAmount?: number;
-    durationHours?: number;
+
+  // 작업유형별 상세 정보
+  transplantActivity?: {
+    speciesType?: string;
+    locationType?: string;
+    methodType?: string;
+    scale?: string;
+    healthStatus?: HealthGrade;
   };
+
+  grazerRemovalActivity?: {
+    targetSpecies?: string[];
+    densityBeforeWork?: string;
+    workScope?: string;
+    note?: string;
+    collectionAmount?: string;
+  };
+
+  substrateImprovementActivity?: {
+    targetType?: string;
+    workScope?: string;
+    substrateState?: string;
+  };
+
+  monitoringActivity?: {
+    entryCoordinate?: string;
+    exitCoordinate?: string;
+    direction?: string;
+    terrain?: string;
+    barrenExtent?: string;
+    grazerDistribution?: string;
+    rockFeatures?: string[];
+    suitability?: string;
+    seaweedIdNumber?: string;
+    seaweedHealthStatus?: string;
+    leafLength?: string;
+    maxLeafWidth?: string;
+  };
+
+  marineCleanupActivity?: {
+    wasteTypes?: string[];
+    method?: string;
+    collectionAmount?: string;
+    uncollectedScale?: string;
+  };
+
   attachments?: Array<{
     attachmentId: number;
     fileName: string;
@@ -299,9 +341,8 @@ type SubmissionDetailResponse = {
 
 export async function getSubmissionDetails(id: number) {
   try {
-    // ✅ GET에는 body를 넣지 않습니다.
     const { data } = await axiosInstance.get<SubmissionDetailResponse>(
-      `/api/admin/submissions/${id}`
+      `/api/admin/submissions/${id}`,
     );
     return data;
   } catch (err) {

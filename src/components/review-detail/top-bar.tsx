@@ -33,7 +33,7 @@ export default function TopBar({
       </button>
 
       <div className="text-lg font-bold tracking-tight text-gray-900">
-        Dive #{detail.submissionId}
+        {detail.siteName}
       </div>
 
       <div>

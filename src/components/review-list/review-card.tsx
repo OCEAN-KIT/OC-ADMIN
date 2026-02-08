@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import type { Submission } from "@/api/submissions";
 import { CalendarClock, MapPin, User2, Paperclip, Trash2 } from "lucide-react";
 import { REVIEW_GRID } from "./review-grid";
+import { activityLabel, type ActivityType } from "@/types/activity";
 
 type Props = {
   review: Submission;
@@ -25,8 +26,9 @@ export default function ReviewCard({
   const router = useRouter();
   const goDetail = () => router.push(`/review/${review.id}`);
 
-  // ✅ 백엔드 포맷: "2025,12,3,9,0,7,438000000"
   const raw = review.datetime;
+
+  const task = activityLabel(review.task as ActivityType);
 
   let dateStr = "";
   if (typeof raw === "string" && raw.includes(",")) {
@@ -89,6 +91,7 @@ export default function ReviewCard({
   };
 
   return (
+    
     <div
       role="button"
       tabIndex={0}
@@ -98,6 +101,7 @@ export default function ReviewCard({
         "group rounded-2xl bg-white px-5 py-4 cursor-pointer transition",
       ].join(" ")}
     >
+      
       <div className={`${REVIEW_GRID} items-center`}>
         <div className="pl-1 flex items-center gap-2">
           {isSelectable ? (
@@ -126,7 +130,7 @@ export default function ReviewCard({
           <time>{dateStr}</time>
         </div>
 
-        <div className="font-medium text-gray-700">{review.task}</div>
+        <div className="font-medium text-gray-700">{task}</div>
 
         <div className="flex items-center gap-1.5 text-gray-700">
           <User2 className="h-4 w-4 text-gray-400" />

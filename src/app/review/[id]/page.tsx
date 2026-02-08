@@ -1,24 +1,20 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 
 import TopBar from "@/components/review-detail/top-bar";
-import SessionSummary from "@/components/review-detail/session-summary";
-import LogCard from "@/components/review-detail/log-card";
+import CommonSection from "@/components/review-detail/common-section";
+import ActivitySection from "@/components/review-detail/activity-section";
+import PhotoLightbox from "@/components/review-detail/photo-lightbox";
 
 import { useAuthGuard } from "@/hooks/useAuthGuard";
-import {
-  getSubmissionDetails,
-  type SubmissionDetailServer,
-} from "@/api/submissions";
-
-import { type DiverActivityLog, type ActivityKind } from "@/types/divers";
+import { getSubmissionDetails } from "@/api/submissions";
 import { csvExportByIds } from "@/api/csv";
 import { ClipLoader } from "react-spinners";
-import { keyToPublicUrl } from "@/utils/s3"; // ✅ 여기로 교체
+import { extractImageUrls } from "@/utils/attachment";
 
 export default function ReviewPage() {
   useAuthGuard({ mode: "gotoLogin" });
@@ -26,6 +22,8 @@ export default function ReviewPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const diveId = Number(params.id);
+
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const { data, isFetching, isError } = useQuery({
     queryKey: ["submissionDetail", diveId],
@@ -63,15 +61,7 @@ export default function ReviewPage() {
     );
   }
 
-  const commonDate =
-    detail.basicEnv?.recordDate ??
-    (detail.submittedAt ? detail.submittedAt.slice(0, 10) : "");
-
-  const participantCount = detail.participants?.participantCount ?? 0;
-  const site = detail.siteName;
-
-  const sessionLog: DiverActivityLog = toSessionLog(detail);
-  const auditLogs = detail.auditLogs ?? [];
+  const photos = extractImageUrls(detail.attachments);
 
   return (
     <div className="mx-auto max-w-[1100px] p-6">
@@ -80,76 +70,62 @@ export default function ReviewPage() {
         onExport={() => csvExportByIds([Number(detail.submissionId)])}
       />
 
-      <SessionSummary
-        date={commonDate}
-        participantCount={participantCount}
-        site={site}
-      />
+      {/* 단일 카드 안에 모든 데이터 */}
+      <div className="rounded-2xl bg-white px-6 py-5 ring-1 ring-black/5">
+        {/* 공통 영역 */}
+        <CommonSection detail={detail} />
 
-      <section className="mt-6 space-y-4">
-        <LogCard log={sessionLog} />
-      </section>
+        {/* 작업유형별 상세 */}
+        <ActivitySection detail={detail} />
 
-      {/* 감사 로그 ... */}
+        {/* 작업 설명 */}
+        {detail.workDescription && (
+          <section className="mt-6">
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              작업 설명
+            </h2>
+            <p className="whitespace-pre-wrap text-sm text-gray-800">
+              {detail.workDescription}
+            </p>
+          </section>
+        )}
+
+        {/* 첨부 사진 */}
+        {photos.length > 0 && (
+          <section className="mt-6">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+              첨부 사진
+            </h2>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {photos.map((src, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="relative aspect-4/3 overflow-hidden rounded-lg ring-1 ring-gray-200 cursor-pointer hover:ring-2 hover:ring-blue-400 transition-shadow"
+                  onClick={() => setLightboxIndex(i)}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={src}
+                    alt={`photo-${i + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
+      {/* 라이트박스 */}
+      {lightboxIndex !== null && (
+        <PhotoLightbox
+          photos={photos}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onChangeIndex={setLightboxIndex}
+        />
+      )}
     </div>
   );
-}
-
-/** 서버 activity → UI ActivityKind 매핑 */
-function toActivityKind(serverType: string | undefined): ActivityKind {
-  switch ((serverType || "").toUpperCase()) {
-    case "TRASH_COLLECTION":
-      return "DebrisRemoval";
-    case "URCHIN_REMOVAL":
-      return "Other"; // 필요 시 별도 Kind 추가
-    case "OTHER":
-    default:
-      return "Other";
-  }
-}
-
-/** SubmissionDetailServer → DiverActivityLog */
-function toSessionLog(detail: SubmissionDetailServer): DiverActivityLog {
-  const env = detail.basicEnv
-    ? {
-        waterTempC: detail.basicEnv.waterTempC,
-        current: detail.basicEnv.currentState,
-        visibilityM: detail.basicEnv.visibilityM,
-        depthM: detail.basicEnv.depthM,
-      }
-    : undefined;
-
-  const activityKind = toActivityKind(
-    detail.activity?.type ?? detail.activityType
-  );
-  const details = detail.activity?.details ?? detail.feedbackText ?? "";
-
-  // ✅ 이미지일 때만 key → 절대 URL로 변환해서 UI에 전달
-  const photos =
-    detail.attachments
-      ?.filter((a) => {
-        const mt = (a.mimeType || "").toLowerCase();
-        if (mt.startsWith("image/")) return true;
-        const p = (a.fileUrl || "").toLowerCase();
-        return [
-          ".jpg",
-          ".jpeg",
-          ".png",
-          ".gif",
-          ".webp",
-          ".bmp",
-          ".tif",
-          ".tiff",
-        ].some((ext) => p.endsWith(ext));
-      })
-      .map((a) => keyToPublicUrl(a.fileUrl)) ?? // ← 여기!
-    [];
-
-  return {
-    env,
-    activity: activityKind,
-    details,
-    media: photos.length ? { photos } : undefined,
-    incidentOrAbnormal: detail.rejectReason || undefined,
-  };
 }
