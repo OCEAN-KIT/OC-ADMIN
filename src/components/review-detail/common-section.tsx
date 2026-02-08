@@ -26,7 +26,11 @@ export default function CommonSection({ detail }: Props) {
           />
           <DetailField
             label="다이빙 회차"
-            value={`${detail.divingRound ?? "-"}회차`}
+            value={
+              detail.divingRound != null
+                ? `${detail.divingRound}회차`
+                : undefined
+            }
           />
           <DetailField
             label="참여자"
@@ -57,19 +61,19 @@ export default function CommonSection({ detail }: Props) {
             />
             <DetailField
               label="시야"
-              value={envStatusLabel(env.visibilityStatus ?? "")}
+              value={envStatusLabel(env.visibilityStatus)}
             />
             <DetailField
               label="파도"
-              value={envStatusLabel(env.waveStatus ?? "")}
+              value={envStatusLabel(env.waveStatus)}
             />
             <DetailField
               label="서지"
-              value={envStatusLabel(env.surgeStatus ?? "")}
+              value={envStatusLabel(env.surgeStatus)}
             />
             <DetailField
               label="조류"
-              value={envStatusLabel(env.currentStatus ?? "")}
+              value={envStatusLabel(env.currentStatus)}
             />
           </div>
         </section>

@@ -31,7 +31,7 @@ export function activityLabel(type: ActivityType): string {
 }
 
 /** EnvStatus → 한글 라벨 */
-export function envStatusLabel(status: string): string {
+export function envStatusLabel(status: string | undefined): string | undefined {
   switch (status) {
     case "BAD":
       return "나쁨";
@@ -40,6 +40,6 @@ export function envStatusLabel(status: string): string {
     case "GOOD":
       return "좋음";
     default:
-      return status;
+      return status || undefined;
   }
 }

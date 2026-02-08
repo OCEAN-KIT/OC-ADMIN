@@ -8,7 +8,9 @@ export default function DetailField({
   value: string | number | number[] | undefined;
 }) {
   const display = Array.isArray(value)
-    ? `${value[0]}년 ${String(value[1]).padStart(2, "0")}월 ${String(value[2]).padStart(2, "0")}일 ${String(value[3]).padStart(2, "0")}시 ${String(value[4]).padStart(2, "0")}분`
+    ? value.length >= 5
+      ? `${value[0]}년 ${String(value[1]).padStart(2, "0")}월 ${String(value[2]).padStart(2, "0")}일 ${String(value[3]).padStart(2, "0")}시 ${String(value[4]).padStart(2, "0")}분`
+      : "-"
     : (value ?? "-");
 
   return (
