@@ -24,15 +24,18 @@ export default function TopBar({ detail, onExport }: Props) {
 
   const [rejectOpen, setRejectOpen] = useState(false);
 
-  const showActions = detail.status !== "APPROVED" && detail.status !== "REJECTED";
+  const showActions =
+    detail.status !== "APPROVED" && detail.status !== "REJECTED";
   const canExport = detail.status === "APPROVED";
 
   const invalidateDetail = () =>
-    qc.invalidateQueries({ queryKey: ["submissionDetail", detail.submissionId] });
+    qc.invalidateQueries({
+      queryKey: ["submissionDetail", detail.submissionId],
+    });
 
   return (
     <>
-      <div className="mb-6 -mt-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-[#34609E] ring-1 ring-gray-200 hover:bg-gray-50"
@@ -45,46 +48,42 @@ export default function TopBar({ detail, onExport }: Props) {
           {detail.siteName}
         </div>
 
-        <div>
-          <div className="relative ml-4 flex justify-start gap-2">
-            {showActions && (
-              <button
-                type="button"
-                aria-label="반려"
-                onClick={() => setRejectOpen(true)}
-                className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-rose-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:brightness-105 active:translate-y-[1px]"
-              >
-                반려
-              </button>
-            )}
+        <div className="flex items-center gap-2">
+          {showActions && (
+            <button
+              type="button"
+              aria-label="반려"
+              onClick={() => setRejectOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:brightness-105 active:translate-y-[1px]"
+            >
+              반려
+            </button>
+          )}
 
-            {showActions && (
-              <button
-                type="button"
-                aria-label="승인"
-                disabled={approve.isPending}
-                onClick={() =>
-                  approve.mutate(id, { onSuccess: invalidateDetail })
-                }
-                className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:brightness-105 active:translate-y-[1px] disabled:opacity-40"
-              >
-                승인
-              </button>
-            )}
+          {showActions && (
+            <button
+              type="button"
+              aria-label="승인"
+              disabled={approve.isPending}
+              onClick={() =>
+                approve.mutate(id, { onSuccess: invalidateDetail })
+              }
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:brightness-105 active:translate-y-[1px] disabled:opacity-40"
+            >
+              승인
+            </button>
+          )}
 
-            {canExport && (
-              <button
-                type="button"
-                aria-label="내보내기"
-                onClick={onExport}
-                className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-gray-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:brightness-105"
-              >
-                내보내기
-              </button>
-            )}
-          </div>
-
-          <div className="h-6 w-[84px]" />
+          {canExport && (
+            <button
+              type="button"
+              aria-label="내보내기"
+              onClick={onExport}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-gray-500 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:brightness-105"
+            >
+              내보내기
+            </button>
+          )}
         </div>
       </div>
 
