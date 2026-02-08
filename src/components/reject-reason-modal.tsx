@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 type Props = {
   open: boolean;
   ids: string[]; // 반려 대상 id들 (단일/일괄 공용)
+  loading?: boolean;
   onClose: () => void;
   onSubmit: (payload: {
     ids: string[];
@@ -12,7 +14,7 @@ type Props = {
   }) => void;
 };
 
-export default function RejectModal({ open, ids, onClose, onSubmit }: Props) {
+export default function RejectModal({ open, ids, loading = false, onClose, onSubmit }: Props) {
   const [message, setMessage] = useState("");
   const [templateCode, setTemplateCode] = useState<string | undefined>(
     undefined
@@ -34,7 +36,7 @@ export default function RejectModal({ open, ids, onClose, onSubmit }: Props) {
 
   if (!open) return null;
 
-  const disabled = message.trim().length === 0;
+  const disabled = message.trim().length === 0 || loading;
 
   return (
     <div
@@ -91,8 +93,9 @@ export default function RejectModal({ open, ids, onClose, onSubmit }: Props) {
           <button
             disabled={disabled}
             onClick={() => onSubmit({ ids, reason: { templateCode, message } })}
-            className="h-9 px-3 rounded-md text-sm bg-rose-500 text-white shadow-sm hover:brightness-105 active:translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed"
+            className="h-9 px-3 rounded-md text-sm bg-rose-500 text-white shadow-sm hover:brightness-105 active:translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center gap-2"
           >
+            {loading && <ClipLoader size={14} color="#fff" />}
             반려 사유 제출
           </button>
         </div>

@@ -7,7 +7,7 @@ export function useSubmissionSelection(items: Submission[]) {
   const selectableIds = useMemo(
     () =>
       items
-        .filter((i) => i.status === "pending" || i.status === "approved")
+        .filter((i) => i.status === "pending")
         .map((i) => String(i.id)),
     [items]
   );
