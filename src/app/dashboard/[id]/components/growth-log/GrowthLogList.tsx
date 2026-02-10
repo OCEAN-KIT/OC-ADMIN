@@ -22,7 +22,6 @@ type Props = {
   ) => void;
   onSaveNewSpecies: () => void;
   onCancelAddForm: () => void;
-  onRemoveSpecies: (speciesName: string) => void;
   onToggleRepresentative: (speciesId: number) => void;
 };
 
@@ -35,7 +34,6 @@ export default function GrowthLogList({
   onFieldChange,
   onSaveNewSpecies,
   onCancelAddForm,
-  onRemoveSpecies,
   onToggleRepresentative,
 }: Props) {
   const { data: speciesList = [] } = useSpecies();
@@ -123,44 +121,6 @@ export default function GrowthLogList({
               </select>
             </div>
 
-            {/* 착생률 */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-600 mb-1">
-                착생률 (%)
-              </label>
-              <input
-                type="number"
-                value={form.attachmentRate || ""}
-                onChange={(e) =>
-                  onFieldChange(
-                    "attachmentRate",
-                    e.target.value === "" ? 0 : Number(e.target.value),
-                  )
-                }
-                placeholder="0"
-                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200"
-              />
-            </div>
-
-            {/* 생존률 */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-600 mb-1">
-                생존률 (%)
-              </label>
-              <input
-                type="number"
-                value={form.survivalRate || ""}
-                onChange={(e) =>
-                  onFieldChange(
-                    "survivalRate",
-                    e.target.value === "" ? 0 : Number(e.target.value),
-                  )
-                }
-                placeholder="0"
-                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200"
-              />
-            </div>
-
             {/* 길이 */}
             <div className="sm:col-span-2">
               <label className="block text-xs text-gray-600 mb-1">
@@ -207,7 +167,6 @@ export default function GrowthLogList({
           key={sec.speciesName}
           section={sec}
           isRepresentative={representativeSpeciesId === sec.speciesId}
-          onRemoveSpecies={() => onRemoveSpecies(sec.speciesName)}
           onToggleRepresentative={() => onToggleRepresentative(sec.speciesId)}
         />
       ))}

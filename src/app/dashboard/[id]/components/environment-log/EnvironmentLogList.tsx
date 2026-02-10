@@ -117,47 +117,9 @@ export default function EnvironmentLogList({
               />
             </div>
 
-            {/* 용존산소 */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-600 mb-1">
-                용존산소 (mg/L)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                value={form.dissolvedOxygen || ""}
-                onChange={(e) =>
-                  setField(
-                    "dissolvedOxygen",
-                    e.target.value === "" ? 0 : Number(e.target.value),
-                  )
-                }
-                placeholder="0"
-                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200"
-              />
-            </div>
-
-            {/* 영양염 */}
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-gray-600 mb-1">영양염</label>
-              <input
-                type="number"
-                step="0.1"
-                value={form.nutrient || ""}
-                onChange={(e) =>
-                  setField(
-                    "nutrient",
-                    e.target.value === "" ? 0 : Number(e.target.value),
-                  )
-                }
-                placeholder="0"
-                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200"
-              />
-            </div>
-
-            {/* 투명도 */}
+            {/* 시야 */}
             <div className="sm:col-span-1">
-              <label className="block text-xs text-gray-600 mb-1">투명도</label>
+              <label className="block text-xs text-gray-600 mb-1">시야</label>
               <select
                 value={form.visibility}
                 onChange={(e) =>
@@ -199,9 +161,9 @@ export default function EnvironmentLogList({
               </select>
             </div>
 
-            {/* 너울 */}
+            {/* 서지 */}
             <div className="sm:col-span-1">
-              <label className="block text-xs text-gray-600 mb-1">너울</label>
+              <label className="block text-xs text-gray-600 mb-1">서지</label>
               <select
                 value={form.surge}
                 onChange={(e) =>
@@ -272,19 +234,13 @@ export default function EnvironmentLogList({
                   수온
                 </th>
                 <th className="text-left px-4 py-2 font-medium text-gray-600">
-                  용존산소
-                </th>
-                <th className="text-left px-4 py-2 font-medium text-gray-600">
-                  영양염
-                </th>
-                <th className="text-left px-4 py-2 font-medium text-gray-600">
-                  투명도
+                  시야
                 </th>
                 <th className="text-left px-4 py-2 font-medium text-gray-600">
                   조류
                 </th>
                 <th className="text-left px-4 py-2 font-medium text-gray-600">
-                  너울
+                  서지
                 </th>
                 <th className="text-left px-4 py-2 font-medium text-gray-600">
                   파도
@@ -300,8 +256,6 @@ export default function EnvironmentLogList({
                     {entry.recordDate[2]}
                   </td>
                   <td className="px-4 py-3">{entry.temperature}&deg;C</td>
-                  <td className="px-4 py-3">{entry.dissolvedOxygen}mg/L</td>
-                  <td className="px-4 py-3">{entry.nutrient}</td>
                   <td className="px-4 py-3">
                     {entry.visibility &&
                       conditionBadge(entry.visibility as EnvironmentCondition)}

@@ -59,8 +59,6 @@ export type GrowthStatus = "GOOD" | "NORMAL" | "POOR";
 export type GrowthLogPayload = {
   speciesId: number;
   recordDate: string;
-  attachmentRate: number;
-  survivalRate: number;
   growthLength: number;
   status: GrowthStatus | "";
 };
@@ -74,8 +72,6 @@ export type EnvironmentCondition = "GOOD" | "NORMAL" | "POOR";
 export type EnvironmentLogPayload = {
   recordDate: string;
   temperature: number;
-  dissolvedOxygen: number;
-  nutrient: number;
   visibility: EnvironmentCondition | "";
   current: EnvironmentCondition | "";
   surge: EnvironmentCondition | "";

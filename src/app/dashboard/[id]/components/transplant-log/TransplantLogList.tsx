@@ -26,7 +26,6 @@ type Props = {
   ) => void;
   onSaveNewSpecies: () => void;
   onCancelAddForm: () => void;
-  onRemoveSpecies: (speciesName: string) => void;
 };
 
 export default function TransplantLogList({
@@ -37,7 +36,6 @@ export default function TransplantLogList({
   onFieldChange,
   onSaveNewSpecies,
   onCancelAddForm,
-  onRemoveSpecies,
 }: Props) {
   const { data: speciesList = [] } = useSpecies();
 
@@ -238,7 +236,6 @@ export default function TransplantLogList({
         <TransplantLogCard
           key={sec.speciesName}
           section={sec}
-          onRemoveSpecies={() => onRemoveSpecies(sec.speciesName)}
         />
       ))}
 

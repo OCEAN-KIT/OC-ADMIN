@@ -21,10 +21,9 @@ import {
 
 type Props = {
   section: SpeciesSection;
-  onRemoveSpecies: () => void;
 };
 
-export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
+export default function TransplantLogCard({ section }: Props) {
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostTransplantLog(areaId);
@@ -104,16 +103,6 @@ export default function TransplantLogCard({ section, onRemoveSpecies }: Props) {
             기록 추가
           </button>
 
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemoveSpecies();
-            }}
-            className="px-2 py-1 text-xs rounded border border-gray-300 bg-white hover:bg-gray-50"
-          >
-            종 제거
-          </button>
         </div>
       </div>
 

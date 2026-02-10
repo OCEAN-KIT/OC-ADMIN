@@ -23,8 +23,6 @@ export default function useGrowthLogs(areaId: number) {
           id: item.id,
           speciesId: item.speciesId,
           recordDate: item.recordDate,
-          attachmentRate: item.attachmentRate,
-          survivalRate: item.survivalRate,
           growthLength: item.growthLength,
           status: item.status as GrowthStatus,
         });
