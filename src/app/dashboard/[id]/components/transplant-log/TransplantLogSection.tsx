@@ -62,14 +62,6 @@ export default function TransplantLogSection({
     setForm({ ...EMPTY_FORM });
   };
 
-  // ── 종 제거 ──
-
-  const removeSpecies = (speciesName: string) => {
-    onTransplantChange(
-      transplantPayload.filter((s) => s.speciesName !== speciesName),
-    );
-  };
-
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
@@ -106,7 +98,6 @@ export default function TransplantLogSection({
         onFieldChange={setField}
         onSaveNewSpecies={handleAddSpeciesWithFirstLog}
         onCancelAddForm={() => setShowAddForm(false)}
-        onRemoveSpecies={removeSpecies}
       />
     </section>
   );

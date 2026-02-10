@@ -23,8 +23,6 @@ export type GrowthSpeciesSection = {
 export const EMPTY_FORM: GrowthLogPayload = {
   speciesId: 0,
   recordDate: "",
-  attachmentRate: 0,
-  survivalRate: 0,
   growthLength: 0,
   status: "",
 };

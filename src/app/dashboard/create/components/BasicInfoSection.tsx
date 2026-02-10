@@ -76,7 +76,8 @@ export default function BasicInfoSection({
             htmlFor="name"
             className="block text-sm font-medium text-gray-700 mb-1.5"
           >
-            작업 영역명          </label>
+            작업 영역명{" "}
+          </label>
           <input
             id="name"
             name="name"
@@ -93,7 +94,8 @@ export default function BasicInfoSection({
             htmlFor="restorationRegion"
             className="block text-sm font-medium text-gray-700 mb-1.5"
           >
-            복원 지역          </label>
+            복원 지역{" "}
+          </label>
           <select
             id="restorationRegion"
             name="restorationRegion"
@@ -117,7 +119,8 @@ export default function BasicInfoSection({
               htmlFor="startDate"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              복원 시작일            </label>
+              복원 시작일{" "}
+            </label>
             <input
               type="date"
               id="startDate"
@@ -153,7 +156,8 @@ export default function BasicInfoSection({
               htmlFor="habitat"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              서식지 유형            </label>
+              서식지 유형{" "}
+            </label>
             <select
               id="habitat"
               name="habitat"
@@ -175,7 +179,8 @@ export default function BasicInfoSection({
               htmlFor="level"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              프로젝트 단계            </label>
+              프로젝트 단계{" "}
+            </label>
             <select
               id="level"
               name="level"
@@ -197,7 +202,8 @@ export default function BasicInfoSection({
               htmlFor="attachmentStatus"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              영역 착생 상태            </label>
+              영역 생존 상태
+            </label>
             <select
               id="attachmentStatus"
               name="attachmentStatus"
@@ -222,7 +228,8 @@ export default function BasicInfoSection({
               htmlFor="depth"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              평균 수심(m)            </label>
+              평균 수심(m){" "}
+            </label>
             <input
               type="number"
               id="depth"
@@ -241,7 +248,8 @@ export default function BasicInfoSection({
               htmlFor="areaSize"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              면적(m²)            </label>
+              면적(m²){" "}
+            </label>
             <input
               type="number"
               id="areaSize"
@@ -263,7 +271,8 @@ export default function BasicInfoSection({
               htmlFor="lat"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              위도(lat)            </label>
+              위도(lat){" "}
+            </label>
             <input
               type="number"
               id="lat"
@@ -281,7 +290,8 @@ export default function BasicInfoSection({
               htmlFor="lon"
               className="block text-sm font-medium text-gray-700 mb-1.5"
             >
-              경도(lon)            </label>
+              경도(lon){" "}
+            </label>
             <input
               type="number"
               id="lon"

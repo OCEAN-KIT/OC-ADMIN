@@ -37,8 +37,6 @@ export type EnvironmentLogEntry = EnvironmentLogPayload & { id: number };
 export const EMPTY_FORM: EnvironmentLogPayload = {
   recordDate: "",
   temperature: 0,
-  dissolvedOxygen: 0,
-  nutrient: 0,
   visibility: "",
   current: "",
   surge: "",

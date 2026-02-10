@@ -17,11 +17,10 @@ import {
 type Props = {
   section: GrowthSpeciesSection;
   isRepresentative: boolean;
-  onRemoveSpecies: () => void;
   onToggleRepresentative: () => void;
 };
 
-export default function GrowthLogCard({ section, isRepresentative, onRemoveSpecies, onToggleRepresentative }: Props) {
+export default function GrowthLogCard({ section, isRepresentative, onToggleRepresentative }: Props) {
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
@@ -121,16 +120,6 @@ export default function GrowthLogCard({ section, isRepresentative, onRemoveSpeci
             기록 추가
           </button>
 
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemoveSpecies();
-            }}
-            className="px-2 py-1 text-xs rounded border border-gray-300 bg-white hover:bg-gray-50"
-          >
-            종 제거
-          </button>
         </div>
       </div>
 
@@ -143,12 +132,6 @@ export default function GrowthLogCard({ section, isRepresentative, onRemoveSpeci
               <tr className="border-b">
                 <th className="text-left py-2 font-medium text-gray-600">
                   날짜
-                </th>
-                <th className="text-left py-2 font-medium text-gray-600">
-                  착생률
-                </th>
-                <th className="text-left py-2 font-medium text-gray-600">
-                  생존률
                 </th>
                 <th className="text-left py-2 font-medium text-gray-600">
                   현재 길이
@@ -169,8 +152,6 @@ export default function GrowthLogCard({ section, isRepresentative, onRemoveSpeci
                     <td className="py-3 text-gray-500">
                       {g.recordDate[0]}.{g.recordDate[1]}.{g.recordDate[2]}
                     </td>
-                    <td className="py-3">{g.attachmentRate}%</td>
-                    <td className="py-3">{g.survivalRate}%</td>
                     <td className="py-3">{g.growthLength}mm</td>
                     <td className="py-3">
                       {statusLabel && (
@@ -214,32 +195,6 @@ export default function GrowthLogCard({ section, isRepresentative, onRemoveSpeci
                   type="date"
                   value={form.recordDate}
                   onChange={(e) => setField("recordDate", e.target.value)}
-                  className="px-2 py-1.5 text-sm rounded border border-gray-200"
-                />
-
-                <input
-                  type="number"
-                  placeholder="착생률 %"
-                  value={form.attachmentRate || ""}
-                  onChange={(e) =>
-                    setField(
-                      "attachmentRate",
-                      e.target.value === "" ? 0 : Number(e.target.value),
-                    )
-                  }
-                  className="px-2 py-1.5 text-sm rounded border border-gray-200"
-                />
-
-                <input
-                  type="number"
-                  placeholder="생존률 %"
-                  value={form.survivalRate || ""}
-                  onChange={(e) =>
-                    setField(
-                      "survivalRate",
-                      e.target.value === "" ? 0 : Number(e.target.value),
-                    )
-                  }
                   className="px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 

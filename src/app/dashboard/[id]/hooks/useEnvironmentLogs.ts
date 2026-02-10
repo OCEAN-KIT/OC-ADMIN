@@ -13,8 +13,6 @@ export default function useEnvironmentLogs(areaId: number) {
         id: item.id,
         recordDate: item.recordDate,
         temperature: item.temperature,
-        dissolvedOxygen: item.dissolvedOxygen,
-        nutrient: item.nutrient,
         visibility: item.visibility as EnvironmentCondition,
         current: item.current as EnvironmentCondition,
         surge: item.surge as EnvironmentCondition,

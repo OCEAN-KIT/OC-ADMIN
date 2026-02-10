@@ -64,8 +64,6 @@ export type GrowthLogItem = {
   recordDate: string;
   speciesId: number;
   speciesName: string;
-  attachmentRate: number;
-  survivalRate: number;
   growthLength: number;
   status: string;
   statusName: string;
@@ -79,8 +77,6 @@ export type EnvironmentLogItem = {
   id: number;
   recordDate: string;
   temperature: number;
-  dissolvedOxygen: number;
-  nutrient: number;
   visibility: string;
   visibilityName: string;
   current: string;
