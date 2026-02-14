@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import { getAreaDetail } from "../api/areaDetail";
 import type { BasicPayload } from "../../create/api/types";
 import {
@@ -11,7 +12,7 @@ import {
 
 export default function useAreaDetail(id: number) {
   return useQuery({
-    queryKey: ["areas", id, "detail"],
+    queryKey: queryKeys.areas.detail(id),
     queryFn: () => getAreaDetail(id),
     enabled: id > 0,
     select: (res): BasicPayload => {

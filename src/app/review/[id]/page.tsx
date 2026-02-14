@@ -11,6 +11,7 @@ import ActivitySection from "@/components/review-detail/activity-section";
 import PhotoLightbox from "@/components/review-detail/photo-lightbox";
 
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { queryKeys } from "@/hooks/queryKeys";
 import { getSubmissionDetails } from "@/api/submissions";
 import { csvExportByIds } from "@/api/csv";
 import { ClipLoader } from "react-spinners";
@@ -26,7 +27,7 @@ export default function ReviewPage() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const { data, isFetching, isError } = useQuery({
-    queryKey: ["submissionDetail", diveId],
+    queryKey: queryKeys.submissionDetail(diveId),
     queryFn: () => getSubmissionDetails(diveId),
     staleTime: 30_000,
     enabled: Number.isFinite(diveId),

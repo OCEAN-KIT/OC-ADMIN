@@ -4,6 +4,7 @@
 
 import { logIn } from "@/api/auth";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { queryKeys } from "@/hooks/queryKeys";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // ⬅️ 추가
@@ -33,7 +34,7 @@ export default function LoginPage() {
       setSyncing(true);
       await logIn(form.id, form.password);
       router.push("/home");
-      queryClient.invalidateQueries({ queryKey: ["myInfo"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.myInfo });
     } catch (err) {
       console.error("로그인 에러:", err);
       setErrorMsg("로그인 중 오류가 발생했습니다.");

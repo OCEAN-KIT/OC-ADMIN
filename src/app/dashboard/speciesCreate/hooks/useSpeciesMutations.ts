@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import { createSpecies, updateSpecies, deleteSpecies } from "../api/species";
 import type { CreateSpeciesRequest } from "../api/types";
 
@@ -10,7 +11,7 @@ export function useCreateSpecies() {
     mutationFn: (data: CreateSpeciesRequest) => createSpecies(data),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["species"],
+        queryKey: queryKeys.species,
       });
     },
   });
@@ -24,7 +25,7 @@ export function useUpdateSpecies(id: number) {
     mutationFn: (name: string) => updateSpecies(id, { name }),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["species"],
+        queryKey: queryKeys.species,
       });
     },
   });
@@ -38,7 +39,7 @@ export function useDeleteSpecies() {
     mutationFn: (id: number) => deleteSpecies(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["species"],
+        queryKey: queryKeys.species,
       });
     },
   });

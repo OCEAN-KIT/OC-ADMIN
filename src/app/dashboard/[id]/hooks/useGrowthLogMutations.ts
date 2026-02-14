@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import {
   postGrowthLog,
   patchGrowthLog,
@@ -16,7 +17,7 @@ export function usePostGrowthLog(areaId: number) {
       postGrowthLog(areaId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "growth-logs"],
+        queryKey: queryKeys.areas.growthLogs(areaId),
       });
     },
   });
@@ -31,7 +32,7 @@ export function usePatchGrowthLog(areaId: number) {
       patchGrowthLog(areaId, logId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "growth-logs"],
+        queryKey: queryKeys.areas.growthLogs(areaId),
       });
     },
   });
@@ -45,7 +46,7 @@ export function useDeleteGrowthLog(areaId: number) {
     mutationFn: (logId: number) => deleteGrowthLog(areaId, logId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "growth-logs"],
+        queryKey: queryKeys.areas.growthLogs(areaId),
       });
     },
   });
@@ -60,7 +61,7 @@ export function usePatchRepresentativeSpecies(areaId: number) {
       patchRepresentativeSpecies(areaId, speciesId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "representative-species"],
+        queryKey: queryKeys.areas.representativeSpecies(areaId),
       });
     },
   });

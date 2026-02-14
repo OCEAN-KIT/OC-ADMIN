@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import { getGrowthLogs, getRepresentativeSpecies } from "../api/growthLogs";
 import type { GrowthSpeciesSection } from "../components/growth-log";
 import type { GrowthStatus } from "../../create/api/types";
 
 export default function useGrowthLogs(areaId: number) {
   return useQuery({
-    queryKey: ["areas", areaId, "growth-logs"],
+    queryKey: queryKeys.areas.growthLogs(areaId),
     queryFn: () => getGrowthLogs(areaId),
     enabled: areaId > 0,
     select: (res): GrowthSpeciesSection[] => {
@@ -35,7 +36,7 @@ export default function useGrowthLogs(areaId: number) {
 
 export function useRepresentativeSpecies(areaId: number) {
   return useQuery({
-    queryKey: ["areas", areaId, "representative-species"],
+    queryKey: queryKeys.areas.representativeSpecies(areaId),
     queryFn: () => getRepresentativeSpecies(areaId),
     enabled: areaId > 0,
     select: (res) => res.data,

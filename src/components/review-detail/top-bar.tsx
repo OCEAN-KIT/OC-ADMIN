@@ -6,7 +6,8 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import type { SubmissionDetailServer } from "@/api/submissions";
-import { useApproveMutation, useRejectMutation } from "@/queries/submissions";
+import { useApproveMutation, useRejectMutation } from "@/hooks/submissions";
+import { queryKeys } from "@/hooks/queryKeys";
 import RejectModal from "@/components/reject-reason-modal";
 
 type Props = {
@@ -30,7 +31,7 @@ export default function TopBar({ detail, onExport }: Props) {
 
   const invalidateDetail = () =>
     qc.invalidateQueries({
-      queryKey: ["submissionDetail", detail.submissionId],
+      queryKey: queryKeys.submissionDetail(detail.submissionId),
     });
 
   return (

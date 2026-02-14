@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { uploadImage } from "@/api/upload-image";
+import { queryKeys } from "@/hooks/queryKeys";
 import { postMediaLog, patchMediaLog, deleteMediaLog } from "../api/mediaLogs";
 import type { MediaCategory } from "../../create/api/types";
 
@@ -34,7 +35,7 @@ export function usePostMediaLog(areaId: number) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "media-logs"],
+        queryKey: queryKeys.areas.mediaLogs(areaId),
       });
     },
   });
@@ -56,7 +57,7 @@ export function usePatchMediaLog(areaId: number) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "media-logs"],
+        queryKey: queryKeys.areas.mediaLogs(areaId),
       });
     },
   });
@@ -70,7 +71,7 @@ export function useDeleteMediaLog(areaId: number) {
     mutationFn: (logId: number) => deleteMediaLog(areaId, logId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "media-logs"],
+        queryKey: queryKeys.areas.mediaLogs(areaId),
       });
     },
   });
