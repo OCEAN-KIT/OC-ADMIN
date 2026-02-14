@@ -11,7 +11,7 @@ export default function useTransplantLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.transplantLogs(areaId),
     queryFn: () => getTransplantLogs(areaId),
-    enabled: areaId > 0,
+    retry: false,
     select: (res): SpeciesSection[] => {
       const map = new Map<number, SpeciesSection>();
 

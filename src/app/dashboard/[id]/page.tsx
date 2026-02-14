@@ -23,6 +23,7 @@ import useGrowthLogs from "./hooks/useGrowthLogs";
 import useEnvironmentLogs from "./hooks/useEnvironmentLogs";
 import useMediaLogs from "./hooks/useMediaLogs";
 import useUpdateBasicInfo from "./hooks/useUpdateBasicInfo";
+import DashboardDetailNotFound from "./not-found";
 
 export default function EditAreaPage() {
   const { checking } = useAuthGuard({ mode: "gotoLogin" });
@@ -31,16 +32,29 @@ export default function EditAreaPage() {
   const areaId = Number(id);
 
   // ── API 데이터 fetch ──
-  const { data: basicData, isLoading: l1 } = useAreaDetail(areaId);
-  const { data: transplantData, isLoading: l2 } = useTransplantLogs(areaId);
-  const { data: growthData, isLoading: l3 } = useGrowthLogs(areaId);
-  const { data: envData, isLoading: l4 } = useEnvironmentLogs(areaId);
-  const { data: mediaData, isLoading: l5 } = useMediaLogs(areaId);
+  const { data: basicData, isLoading: l1, isError: e1 } = useAreaDetail(areaId);
+  const {
+    data: transplantData,
+    isLoading: l2,
+    isError: e2,
+  } = useTransplantLogs(areaId);
+  const {
+    data: growthData,
+    isLoading: l3,
+    isError: e3,
+  } = useGrowthLogs(areaId);
+  const {
+    data: envData,
+    isLoading: l4,
+    isError: e4,
+  } = useEnvironmentLogs(areaId);
+  const { data: mediaData, isLoading: l5, isError: e5 } = useMediaLogs(areaId);
 
   const { mutate: updateBasic, isPending: isUpdatingBasic } =
     useUpdateBasicInfo(areaId);
 
   const isLoading = l1 || l2 || l3 || l4 || l5;
+  const hasFetchError = e1 || e2 || e3 || e4 || e5;
 
   // ── 기본정보 상태 ──
   const [basicPayload, setBasicPayload] =
@@ -111,7 +125,19 @@ export default function EditAreaPage() {
     if (mediaData) setMediaPayload(mediaData);
   }, [mediaData]);
 
-  if (checking || isLoading) {
+  if (checking) {
+    return (
+      <div className="flex h-[calc(100vh-64px)] items-center justify-center">
+        <ClipLoader color="#2C67BC" size={40} />
+      </div>
+    );
+  }
+
+  if (hasFetchError) {
+    return <DashboardDetailNotFound />;
+  }
+
+  if (isLoading) {
     return (
       <div className="flex h-[calc(100vh-64px)] items-center justify-center">
         <ClipLoader color="#2C67BC" size={40} />

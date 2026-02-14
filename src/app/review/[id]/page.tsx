@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
 
 import TopBar from "@/components/review-detail/top-bar";
 import CommonSection from "@/components/review-detail/common-section";
@@ -21,7 +20,6 @@ export default function ReviewPage() {
   useAuthGuard({ mode: "gotoLogin" });
 
   const params = useParams<{ id: string }>();
-  const router = useRouter();
   const diveId = Number(params.id);
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -35,25 +33,16 @@ export default function ReviewPage() {
 
   const detail = data?.data;
 
-  if (isError || !detail) {
+  if (isFetching) {
     return (
-      <div className="mx-auto max-w-[1100px] p-2">
-        <button
-          onClick={() => router.back()}
-          className="inline-flex items-center gap-2 text-[#34609E] hover:underline"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          뒤로가기
-        </button>
-        <div className="flex h-screen -mt-30 items-center justify-center text-center">
-          {isFetching ? (
-            <ClipLoader color="#3263F1" />
-          ) : (
-            "데이터를 찾을 수 없습니다."
-          )}
-        </div>
+      <div className="flex h-[calc(100vh-64px)] items-center justify-center">
+        <ClipLoader color="#3263F1" />
       </div>
     );
+  }
+
+  if (isError || !detail) {
+    notFound();
   }
 
   const photos = extractImageUrls(detail.attachments);

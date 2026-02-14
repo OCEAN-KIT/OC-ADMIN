@@ -8,7 +8,7 @@ export default function useMediaLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.mediaLogs(areaId),
     queryFn: () => getMediaLogs(areaId),
-    enabled: areaId > 0,
+    retry: false,
     select: (res): MediaLogEntry[] =>
       res.data.content.map((item) => ({
         id: item.id,

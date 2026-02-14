@@ -8,7 +8,7 @@ export default function useEnvironmentLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.environmentLogs(areaId),
     queryFn: () => getEnvironmentLogs(areaId),
-    enabled: areaId > 0,
+    retry: false,
     select: (res): EnvironmentLogEntry[] =>
       res.data.content.map((item) => ({
         id: item.id,

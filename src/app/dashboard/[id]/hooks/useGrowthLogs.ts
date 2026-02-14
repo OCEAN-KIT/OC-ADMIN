@@ -8,7 +8,7 @@ export default function useGrowthLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.growthLogs(areaId),
     queryFn: () => getGrowthLogs(areaId),
-    enabled: areaId > 0,
+    retry: false,
     select: (res): GrowthSpeciesSection[] => {
       const map = new Map<number, GrowthSpeciesSection>();
 
@@ -38,7 +38,6 @@ export function useRepresentativeSpecies(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.representativeSpecies(areaId),
     queryFn: () => getRepresentativeSpecies(areaId),
-    enabled: areaId > 0,
     select: (res) => res.data,
   });
 }

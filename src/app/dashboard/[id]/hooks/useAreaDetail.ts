@@ -14,7 +14,7 @@ export default function useAreaDetail(id: number) {
   return useQuery({
     queryKey: queryKeys.areas.detail(id),
     queryFn: () => getAreaDetail(id),
-    enabled: id > 0,
+    retry: false,
     select: (res): BasicPayload => {
       const o = res.data.overview;
       return {
