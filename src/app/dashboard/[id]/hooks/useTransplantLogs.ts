@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import { getTransplantLogs } from "../api/transplantLogs";
 import type { SpeciesSection } from "../components/transplant-log";
 import type {
@@ -8,7 +9,7 @@ import type {
 
 export default function useTransplantLogs(areaId: number) {
   return useQuery({
-    queryKey: ["areas", areaId, "transplant-logs"],
+    queryKey: queryKeys.areas.transplantLogs(areaId),
     queryFn: () => getTransplantLogs(areaId),
     enabled: areaId > 0,
     select: (res): SpeciesSection[] => {

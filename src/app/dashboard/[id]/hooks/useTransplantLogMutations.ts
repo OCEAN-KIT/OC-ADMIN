@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import {
   postTransplantLog,
   patchTransplantLog,
@@ -15,7 +16,7 @@ export function usePostTransplantLog(areaId: number) {
       postTransplantLog(areaId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "transplant-logs"],
+        queryKey: queryKeys.areas.transplantLogs(areaId),
       });
     },
   });
@@ -30,7 +31,7 @@ export function usePatchTransplantLog(areaId: number) {
       patchTransplantLog(areaId, logId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "transplant-logs"],
+        queryKey: queryKeys.areas.transplantLogs(areaId),
       });
     },
   });
@@ -44,7 +45,7 @@ export function useDeleteTransplantLog(areaId: number) {
     mutationFn: (logId: number) => deleteTransplantLog(areaId, logId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "transplant-logs"],
+        queryKey: queryKeys.areas.transplantLogs(areaId),
       });
     },
   });

@@ -2,7 +2,7 @@
 // import { useMutation, useQueryClient } from "@tanstack/react-query";
 // import { updateMyInfo } from "@/api/user";
 // import type { ApiResp, MyInfo } from "@/types/api";
-// import { queryKeys } from "@/react-query/keys";
+// import { queryKeys } from "@/hooks/queryKeys";
 
 // type Form = { nickname: string; email: string; phone: string };
 

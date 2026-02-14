@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import { getMediaLogs } from "../api/mediaLogs";
 import type { MediaLogEntry } from "../components/MediaLogSection";
 import type { MediaCategory } from "../../create/api/types";
 
 export default function useMediaLogs(areaId: number) {
   return useQuery({
-    queryKey: ["areas", areaId, "media-logs"],
+    queryKey: queryKeys.areas.mediaLogs(areaId),
     queryFn: () => getMediaLogs(areaId),
     enabled: areaId > 0,
     select: (res): MediaLogEntry[] =>

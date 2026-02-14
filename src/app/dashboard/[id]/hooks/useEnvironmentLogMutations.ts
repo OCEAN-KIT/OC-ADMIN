@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/hooks/queryKeys";
 import {
   postEnvironmentLog,
   patchEnvironmentLog,
@@ -15,7 +16,7 @@ export function usePostEnvironmentLog(areaId: number) {
       postEnvironmentLog(areaId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "environment-logs"],
+        queryKey: queryKeys.areas.environmentLogs(areaId),
       });
     },
   });
@@ -30,7 +31,7 @@ export function usePatchEnvironmentLog(areaId: number) {
       patchEnvironmentLog(areaId, logId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "environment-logs"],
+        queryKey: queryKeys.areas.environmentLogs(areaId),
       });
     },
   });
@@ -44,7 +45,7 @@ export function useDeleteEnvironmentLog(areaId: number) {
     mutationFn: (logId: number) => deleteEnvironmentLog(areaId, logId),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["areas", areaId, "environment-logs"],
+        queryKey: queryKeys.areas.environmentLogs(areaId),
       });
     },
   });

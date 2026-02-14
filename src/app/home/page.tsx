@@ -8,7 +8,7 @@ import {
   useBulkApproveMutation,
   useBulkRejectMutation,
   useDeleteMutation,
-} from "@/queries/submissions";
+} from "@/hooks/submissions";
 import { useSubmissionSelection } from "@/hooks/useSubmissionSelction"; // ✅ 오타 주의
 import ReviewList from "@/components/review-list/review-list";
 import ReviewBulkActions from "@/components/review-list/review-bulk-actions";
