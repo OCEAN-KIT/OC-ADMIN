@@ -236,7 +236,7 @@ export async function bulkDelete(ids: string[]) {
 import type { ActivityType, EnvStatus, HealthGrade } from "@/types/activity";
 
 export type SubmissionDetailServer = {
-  submissionId: number;
+  submissionId: number | string;
   siteName: string;
   activityType: ActivityType;
   recordDate?: string;

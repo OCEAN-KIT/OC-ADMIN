@@ -24,6 +24,12 @@ export function useAuthGuard({
   homePath = "/home",
   includeNext = true,
 }: Options) {
+  // test 브랜치용 임시 설정: 스크린샷 촬영 중에는 인증 가드 비활성화
+  const DISABLE_AUTH_GUARD_FOR_SCREENSHOT = true;
+  if (DISABLE_AUTH_GUARD_FOR_SCREENSHOT) {
+    return { checking: false, isLoggedIn: true };
+  }
+
   const { data, isLoading, isError } = useMyInfo();
   const router = useRouter();
   const pathname = usePathname();

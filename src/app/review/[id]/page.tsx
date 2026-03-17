@@ -18,7 +18,7 @@ export default function ReviewPage() {
   useAuthGuard({ mode: "gotoLogin" });
 
   const params = useParams<{ id: string }>();
-  const diveId = Number(params.id);
+  const diveId = params.id;
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
