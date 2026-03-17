@@ -24,9 +24,12 @@ export default function SpeciesCreatePage() {
 
   const handleCreate = () => {
     if (!newName.trim()) return;
-    createMutation.mutate({ name: newName.trim() }, {
-      onSuccess: () => setNewName(""),
-    });
+    createMutation.mutate(
+      { name: newName.trim() },
+      {
+        onSuccess: () => setNewName(""),
+      },
+    );
   };
 
   const handleDelete = (id: number) => {
@@ -129,7 +132,7 @@ function SpeciesItem({
   species: { id: number; name: string };
   isEditing: boolean;
   editingName: string;
-  setEditingName: (name: string) => void;
+  setEditingName: (_name: string) => void;
   onStartEdit: () => void;
   onCancelEdit: () => void;
   onDelete: () => void;

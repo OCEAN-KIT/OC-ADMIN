@@ -86,9 +86,7 @@ export default function HomePage() {
             }
             onOpenReject={() => openReject(Array.from(selected))}
             disabled={
-              isFetching ||
-              bulkApprove.isPending ||
-              bulkReject.isPending
+              isFetching || bulkApprove.isPending || bulkReject.isPending
             }
           />
         </div>
@@ -146,7 +144,7 @@ export default function HomePage() {
                     closeReject();
                     clear();
                   },
-                }
+                },
               )
             : bulkReject.mutate(
                 { ids: rejectIds, reason },
@@ -155,7 +153,7 @@ export default function HomePage() {
                     closeReject();
                     clear();
                   },
-                }
+                },
               )
         }
       />

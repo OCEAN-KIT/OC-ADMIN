@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
-import { ChevronRight, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
 import BasicInfoSection from "./components/BasicInfoSection";
 import usePostBasicInfo from "./hooks/usePostBasicInfo";
