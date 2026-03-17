@@ -5,6 +5,7 @@ import type {
   TransplantMethod,
   SpeciesAttachmentStatus,
 } from "../../create/api/types";
+import { resolveWithMockDelay } from "./mockDelay";
 
 const makeRecordDate = (month: number, day: number) =>
   [2026, month, day] as unknown as string;
@@ -83,7 +84,7 @@ const buildTransplantSections = (areaId: number): SpeciesSection[] => {
 export default function useTransplantLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.transplantLogs(areaId),
-    queryFn: () => Promise.resolve(buildTransplantSections(areaId)),
+    queryFn: () => resolveWithMockDelay(buildTransplantSections(areaId), 1800),
     retry: false,
     enabled: Number.isFinite(areaId),
   });

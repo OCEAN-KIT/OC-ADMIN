@@ -20,7 +20,6 @@ type Props = {
 export default function AreaCard({ area }: Props) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { mutate: deleteArea, isPending } = useDeleteArea();
-  const areaRouteId = String(area.id).padStart(3, "0");
 
   const formatDate = (value: unknown) => {
     if (Array.isArray(value) && value.length >= 3) {
@@ -57,7 +56,7 @@ export default function AreaCard({ area }: Props) {
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group overflow-hidden">
       <div className="flex">
         {/* 좌측: 기존 카드 컨텐츠 */}
-        <Link href={`/dashboard/${areaRouteId}`} className="flex-1 p-5">
+        <Link href={`/dashboard/${area.id}`} className="flex-1 p-5">
           {/* 상단: 이름 + 상태 */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">

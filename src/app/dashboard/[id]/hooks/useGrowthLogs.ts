@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/hooks/queryKeys";
 import type { GrowthSpeciesSection } from "../components/growth-log";
 import type { GrowthStatus } from "../../create/api/types";
+import { resolveWithMockDelay } from "./mockDelay";
 
 type RepresentativeSpeciesData = {
   speciesId: number | null;
@@ -72,7 +73,7 @@ const buildRepresentativeSpecies = (areaId: number): RepresentativeSpeciesData =
 export default function useGrowthLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.growthLogs(areaId),
-    queryFn: () => Promise.resolve(buildGrowthSections(areaId)),
+    queryFn: () => resolveWithMockDelay(buildGrowthSections(areaId), 2000),
     retry: false,
     enabled: Number.isFinite(areaId),
   });
@@ -81,7 +82,8 @@ export default function useGrowthLogs(areaId: number) {
 export function useRepresentativeSpecies(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.representativeSpecies(areaId),
-    queryFn: () => Promise.resolve(buildRepresentativeSpecies(areaId)),
+    queryFn: () =>
+      resolveWithMockDelay(buildRepresentativeSpecies(areaId), 2100),
     enabled: Number.isFinite(areaId),
   });
 }

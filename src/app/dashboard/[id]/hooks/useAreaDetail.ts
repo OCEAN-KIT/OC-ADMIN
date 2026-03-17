@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/hooks/queryKeys";
 import type { BasicPayload } from "../../create/api/types";
+import { resolveWithMockDelay } from "./mockDelay";
 
 const REGION_SEQ: BasicPayload["restorationRegion"][] = ["POHANG", "ULJIN"];
 const HABITAT_SEQ: BasicPayload["habitat"][] = ["ROCKY", "MIXED", "OTHER"];
@@ -57,7 +58,7 @@ const getMockAreaBasicPayload = (id: number): BasicPayload => {
 export default function useAreaDetail(id: number) {
   return useQuery({
     queryKey: queryKeys.areas.detail(id),
-    queryFn: () => Promise.resolve(getMockAreaBasicPayload(id)),
+    queryFn: () => resolveWithMockDelay(getMockAreaBasicPayload(id), 1600),
     retry: false,
     enabled: Number.isFinite(id),
   });

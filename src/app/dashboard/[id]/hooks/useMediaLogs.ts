@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/hooks/queryKeys";
 import type { MediaLogEntry } from "../components/MediaLogSection";
 import type { MediaCategory } from "../../create/api/types";
+import { resolveWithMockDelay } from "./mockDelay";
 
 const makeRecordDate = (month: number, day: number) =>
   [2026, month, day] as unknown as string;
@@ -37,7 +38,7 @@ const buildMediaEntries = (areaId: number): MediaLogEntry[] => {
 export default function useMediaLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.mediaLogs(areaId),
-    queryFn: () => Promise.resolve(buildMediaEntries(areaId)),
+    queryFn: () => resolveWithMockDelay(buildMediaEntries(areaId), 2400),
     retry: false,
     enabled: Number.isFinite(areaId),
   });

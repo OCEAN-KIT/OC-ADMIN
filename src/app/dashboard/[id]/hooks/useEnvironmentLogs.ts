@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/hooks/queryKeys";
 import type { EnvironmentLogEntry } from "../components/environment-log";
 import type { EnvironmentCondition } from "../../create/api/types";
+import { resolveWithMockDelay } from "./mockDelay";
 
 const makeRecordDate = (month: number, day: number) =>
   [2026, month, day] as unknown as string;
@@ -49,7 +50,7 @@ const buildEnvironmentEntries = (areaId: number): EnvironmentLogEntry[] => {
 export default function useEnvironmentLogs(areaId: number) {
   return useQuery({
     queryKey: queryKeys.areas.environmentLogs(areaId),
-    queryFn: () => Promise.resolve(buildEnvironmentEntries(areaId)),
+    queryFn: () => resolveWithMockDelay(buildEnvironmentEntries(areaId), 2200),
     retry: false,
     enabled: Number.isFinite(areaId),
   });
