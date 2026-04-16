@@ -6,7 +6,6 @@ import { logIn } from "@/api/auth";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { queryKeys } from "@/hooks/queryKeys";
 import { useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
 import { useRouter } from "next/navigation"; // ⬅️ 추가
 import { useState } from "react"; // ⬅️ useEffect 추가
 import { ClipLoader } from "react-spinners";
@@ -113,40 +112,11 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* 구분선 */}
-            <div className="my-6 flex items-center">
-              <div className="h-px flex-1 bg-gray-200" />
-              <span className="mx-3 whitespace-nowrap text-sm text-gray-500">
-                Or continue with
-              </span>
-              <div className="h-px flex-1 bg-gray-200" />
-            </div>
-
-            {/* 소셜 로그인 (Google만) */}
-            <div className="flex items-center justify-center gap-4">
-              <button
-                type="button"
-                aria-label="구글로 로그인"
-                title="Google"
-                disabled={syncing}
-                className="flex h-14 w-24 items-center justify-center rounded-xl border border-gray-200 bg-gray-50
-                           hover:bg-gray-100 active:translate-y-[1px] transition disabled:opacity-60"
-              >
-                <Image
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  width={28}
-                  height={28}
-                  alt="Google"
-                  priority
-                />
-              </button>
-            </div>
-
             {/* 제출 버튼 */}
             <button
               type="submit"
               disabled={syncing}
-              className="mt-8 h-12 w-full rounded-xl bg-[#3263F1] text-white text-[15px] font-semibold
+              className="h-12 w-full rounded-xl bg-[#3263F1] text-white text-[15px] font-semibold
              shadow-md hover:brightness-105 active:translate-y-[1px]  
              flex items-center justify-center"
             >
